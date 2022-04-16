@@ -60,7 +60,10 @@ const Box = styled.div`
   width: 97vw;
   height: 80vh;
   margin: 70px auto 0px auto;
+<<<<<<< HEAD
   /* background: green; */
+=======
+>>>>>>> branch_정원
   border: 1px solid black;
   border-radius: 10px;
 `;
@@ -88,6 +91,7 @@ const Button = styled.button`
   border-radius: 10px;
 `;
 export default Chat;
+<<<<<<< HEAD
 // 흰색_확인_표시
 // 두_눈
 // +1
@@ -103,3 +107,5 @@ export default Chat;
 
 
 
+=======
+>>>>>>> branch_정원
