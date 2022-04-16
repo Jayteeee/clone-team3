@@ -18,7 +18,7 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-      <Route path="/main" exact component={Main} />
+      <Route path="/" exact component={Main} />
       <Route path="/signup" exact component={Signup} />
       <Route path="/login" exact component={Login} />
       <Route path="/detail/:articleNumber" exact component={articleDetail} />
