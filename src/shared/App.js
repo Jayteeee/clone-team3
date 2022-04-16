@@ -11,6 +11,8 @@ import Signup from "../pages/Signup";
 import myPage from "../pages/myPage";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import styled from "styled-components";
+import { ImPencil } from "react-icons/im";
 
 function App() {
   return (
@@ -26,8 +28,33 @@ function App() {
       <Route path="/chat" exact component={Chat} />
       <Route path="/mypage" exact component={myPage} />
       <Footer />
+      <Button>
+        <ImPencil />
+      </Button>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+const Button = styled.button`
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  border: none;
+  font-size: 20px;
+  background-color: #fff;
+  color: #ef8549;
+  text-align: center;
+  vertical-align: middle;
+  box-shadow: 1px 1px 1px 1px;
+  &:hover {
+    background-color: #ef8549;
+    color: #fff;
+    box-shadow: none;
+    cursor: pointer;
+  }
+`;

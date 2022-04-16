@@ -23,6 +23,16 @@ const Header = () => {
             </button>
           </div>
         </Section>
+        {
+          <FixedBarMenu>
+            <Buttons>
+              <ButtonText>로그인</ButtonText>
+            </Buttons>
+            <Buttons>
+              <ButtonText>회원가입</ButtonText>
+            </Buttons>
+          </FixedBarMenu>
+        }
       </Bar>
     </Container>
   );
@@ -103,6 +113,32 @@ const Section = styled.section`
       }
     }
   }
+`;
+
+const FixedBarMenu = styled.section`
+  display: flex;
+  font-family: Noto Sans KR;
+  color: #4d5159;
+`;
+
+const Buttons = styled.button`
+  margin: 0px 0px 0px 10px;
+  width: 120px;
+  height: 40px;
+  border: 1px solid #d1d3d8;
+  box-sizing: border-box;
+  border-radius: 6px;
+  font-size: 0;
+  background-color: #fff;
+  cursor: pointer;
+`;
+
+const ButtonText = styled.span`
+  color: #4d5159;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: bold;
+  vertical-align: middle;
 `;
 
 export default Header;

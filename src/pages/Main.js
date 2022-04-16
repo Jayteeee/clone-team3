@@ -231,6 +231,7 @@ const HomeStoryList = styled.ul`
   display: flex;
   justify-content: space-between;
   list-style-type: none;
+  padding: 0px;
 `;
 
 const HomeStoryListItem = styled.li`

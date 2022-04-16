@@ -8,7 +8,7 @@ socket.emit("init", { name: "jaehoon" }); //3) 연결 성공시 데이터 전송
 
 const Chat = () => {
   const [chatArr, setChatArr] = useState([]);
-  const [chat, setChat] = useState({ name: "", message: "" });//name:로그인할때 아이디
+  const [chat, setChat] = useState({ name: "", message: "" }); //name:로그인할때 아이디
   useEffect(() => {
     return () => {
       socket.close(); //4) 모든 처리 완료 후 소켓 close
@@ -60,10 +60,6 @@ const Box = styled.div`
   width: 97vw;
   height: 80vh;
   margin: 70px auto 0px auto;
-<<<<<<< HEAD
-  /* background: green; */
-=======
->>>>>>> branch_정원
   border: 1px solid black;
   border-radius: 10px;
 `;
@@ -91,21 +87,3 @@ const Button = styled.button`
   border-radius: 10px;
 `;
 export default Chat;
-<<<<<<< HEAD
-// 흰색_확인_표시
-// 두_눈
-// +1
-// 반응
-// 회신
-
-
-
-
-
-
-
-
-
-
-=======
->>>>>>> branch_정원
