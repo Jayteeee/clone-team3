@@ -4,7 +4,6 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { useSelector } from "react-redux";
-
 const Signup = () => {
   const dispatch = useDispatch();
   const _gu = useSelector((state) => state.user.location.region_2depth_name);
@@ -16,17 +15,18 @@ const Signup = () => {
   const [dong, setDong] = React.useState("");
   const [gu, setGu] = React.useState("");
   const Dong = () => {
-    setDong(_dong);
+    setDong(_dong); //현재 주소(동)값을 setDong에 넣어줌
   };
   const Gu = () => {
-    setGu(_gu);
+    setGu(_gu); //현재 주소(구)값을 setGu에 넣어줌
   };
   const map = () => {
+    //현재 내 위치 찾기(좌표)
     navigator.geolocation.getCurrentPosition(function (pos) {
       // console.log(pos);
       var lat = pos.coords.latitude;
-      var lon = pos.coords.longitude;
-      dispatch(userActions.locationDB(lat, lon));
+      var lon = pos.coords.longitude; //
+      dispatch(userActions.locationDB(lat, lon)); //현재 내 좌표를 주소로 나타내 줌
     });
   };
   const signup = () => {
@@ -83,8 +83,8 @@ const Signup = () => {
             placeholder="아래 버튼을 통해 동네를 설정해 주세요."
             onChange={(e) => {
               console.log("location");
-              setGu(e.target.value);
-              setDong(e.target.value);
+              // setGu(e.target.value);
+              // setDong(e.target.value);
             }}
           ></input>
           <button

@@ -1,8 +1,41 @@
 import React from "react";
 import styled from "styled-components";
 import { IoIosArrowRoundBack } from "react-icons/io";
-
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators as userActions } from "../redux/modules/user";
+import { actionCreators as imageActions } from "../redux/modules/image";
 const MyPage = () => {
+  const dispatch = useDispatch();
+  const userInfo = useSelector((state) => state.user.userInfo);
+  console.log(userInfo);
+  // const isLogin = userInfo.token ? true : false;
+  const fileInput = React.useRef();
+  const [image, setImage] = React.useState("");
+  const [nickName, setnickName] = React.useState("");
+  const [dongne, setDongne] = React.useState("");
+  const [gu, setGu] = React.useState("");
+  React.useEffect(() => {
+    // dispatch(userActions.getUserDB()); //무한 반복 굴레;;
+  });
+  const selectFile = (e) => {
+    const reader = new FileReader(); //사진이 인풋에 들어갔을 때 가져올 것이라서 selectFile안에 써준다.
+    const file = fileInput;
+    console.log(file);
+    reader.readAsDataURL(file); //어떤걸 넣고 싶은 지
+    reader.onloadend = () => {
+      dispatch(imageActions.setPreview(reader.result));
+    };
+  };
+  const editUser = () => {
+    const file = fileInput.current.files[0];
+    console.log(file);
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("nickName", nickName);
+    // formData.append("dongne", Dongne);
+    console.log("formData", formData);
+    dispatch(imageActions.editUserDB(formData));
+  };
   return (
     <React.Fragment>
       <MypageWrap>
@@ -10,22 +43,24 @@ const MyPage = () => {
           <img alt="carrot" src="./img/carrot.png"></img>
           <h2>마이페이지</h2>
           <div className="icon">
-            <IoIosArrowRoundBack size="40px" color="#6b5244" />
+            <IoIosArrowRoundBack size="40px" color="#6B5244" />
           </div>
         </div>
         <div className="fileupload">
-          <Image alt="profile" src="./img/profile.jpg"></Image>
-
+          <Image alt="profile" src={"./img/profile.jpg"}></Image>
           <div className="fileupload">
             <label htmlFor="image">프로필 사진 변경</label>
-            <input type="file" id="image" />
+            <input type="file" id="image" onChange={selectFile} />
           </div>
         </div>
         <div className="edit">
           <div>
             <label>닉네임</label>
-            <input type="text"></input>
-
+            <input
+              type="text"
+              // value={userInfo.userNickname  }
+              onChange={setnickName}
+            ></input>
             <label>나의 동네</label>
             <input type="text"></input>
             <Locationbtn>위치 변경하기</Locationbtn>
@@ -37,14 +72,13 @@ const MyPage = () => {
   );
 };
 const MypageWrap = styled.div`
-  width: 580px;
+  max-width: 600px;
   height: 500px;
   border: 2px solid #ef8549;
   border-radius: 10px;
   padding: 50px;
   margin: 100px auto; //header 삽입후 높이값 수정예정
   position: relative;
-
   .icon {
     position: absolute;
     top: 60px;
@@ -60,7 +94,6 @@ const MypageWrap = styled.div`
   h2 {
     padding: 0 0 30px 30px;
   }
-
   div:nth-of-type(2) {
     width: 40%;
     float: left;
@@ -69,7 +102,6 @@ const MypageWrap = styled.div`
     width: 55%;
     float: right;
   }
-
   label {
     font-size: 18px;
     font-weight: bold;
@@ -80,8 +112,10 @@ const MypageWrap = styled.div`
   label:nth-of-type(2) {
     margin-top: 30px;
   }
-
   .edit {
+    width: 600px;
+    /* background: green; */
+    /* margin-left: 50px; */
   }
   .edit input {
     width: 98%;
@@ -89,9 +123,9 @@ const MypageWrap = styled.div`
     border: 1px solid #999;
     border-radius: 7px;
   }
-
   .fileupload {
     margin-top: 30px;
+    /* margin-right: 30px */
   }
   .fileupload label {
     display: inline-block;
@@ -106,7 +140,6 @@ const MypageWrap = styled.div`
     cursor: pointer;
     border-radius: 10px;
   }
-
   .fileupload input {
     position: absolute;
     width: 1px;
@@ -128,17 +161,17 @@ const Locationbtn = styled.button`
   cursor: pointer;
 `;
 const Clearbtn = styled.button`
-    width:100%;
-    margin:auto
-    display:block;
-    background-color:#ef8549;
-    color:#fff;
-    border:0;
-    height:50px;
-    border-radius:10px;
-    font-size:15px;
-    cursor:pointer;
-    margin-top:50px;
+  width: 100%;
+  margin: auto;
+  display: block;
+  background-color: #ef8549;
+  color: #fff;
+  border: 0;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 50px;
 `;
 const Image = styled.img`
   width: 200px;

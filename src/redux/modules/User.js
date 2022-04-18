@@ -31,9 +31,6 @@ const loginDB = (id, password) => {
       method: "post",
       url: "http://3.35.27.190/main/login", //
       // url: "https://6252ffae7f7fa1b1ddec36b3.mockapi.io/userInfo", //테스트 api id : eve.holt@reqres.in / pw : cityslicka
-      // headers: {
-      //   "Content-Type": `application/json`,
-      // },
       data: {
         userId: id,
         userPassword: password,
@@ -42,12 +39,12 @@ const loginDB = (id, password) => {
       .then((res) => {
         console.log(res);
         const accessToken = res.data.token;
-        // // 쿠키에 토큰 저장
+        // 쿠키에 토큰 저장
         setCookie("isLogin", `${accessToken}`);
         console.log(accessToken);
         dispatch(setUser(accessToken));
         // localStorage.setItem('is_login', doc.data.token);
-        document.location.href = "/main";
+        document.location.href = "/";
       })
       .catch((error) => {
         console.log("로그인 실패", error);
@@ -61,6 +58,7 @@ const logoutDB = () => {
   };
 };
 const locationDB = (lon, lat) => {
+  //
   return function (dispatch, getState) {
     axios
       .get(
@@ -77,7 +75,7 @@ const locationDB = (lon, lat) => {
         // console.log(location.address.region_1depth_name);
         // console.log(location.address.region_2depth_name);
         // console.log(location.address.region_3depth_name);
-        dispatch(loCation(location));
+        dispatch(loCation(location)); //=> useState('') setState로 값 지정해주자! //라이브러리같은 걸 이용할때는 리덕스사용하지 말자!!!!
       });
   };
 };
@@ -94,7 +92,6 @@ const signupDB = (nickName, id, pwd, pwdCheck, gu, dong) => {
         userId: id,
         userPassword: pwd,
         userPasswordCheck: pwdCheck,
-        // userImage: userImage,
         userGu: gu,
         userDong: dong,
       }),

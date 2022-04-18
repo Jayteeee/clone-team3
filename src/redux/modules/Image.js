@@ -8,7 +8,6 @@ const setPreview = createAction(SET_PREVIEW, (preview) => ({ preview }));
 const resetPreview = createAction(RESET_PREVIEW, (preview) => ({ preview }));
 
 const initialState = {
-  image_url: "",
   preview: null,
 };
 

@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
 import { ImPencil } from "react-icons/im";
-import { history } from "../redux/configStore";
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 // 모든 페이지에 나오는 헤더창
@@ -10,7 +9,6 @@ const Header = () => {
   const [isLogin, setIsLogin] = React.useState(false);
   React.useEffect(() => {
     let cookie = document.cookie;
-    console.log(cookie);
     if (cookie) {
       setIsLogin(true);
     } else {
