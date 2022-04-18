@@ -96,7 +96,7 @@ const getOnePostDB = (articleNumber) => {
         articleNumber: articleNumber,
       },
       // url: ``, //서버 주소
-      url: `https://6253d1d889f28cf72b5335ef.mockapi.io/detail/detail${articleNumber}`, //가상 데이터 저장소
+      url: `https://6253d1d889f28cf72b5335ef.mockapi.io/detail`, //가상 데이터 저장소
     })
       .then((response) => {
         console.log(response);

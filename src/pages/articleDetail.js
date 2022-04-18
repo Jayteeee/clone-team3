@@ -36,7 +36,7 @@ const ArticleDetail = (props) => {
     //   }).catch((err) => {
     //   console.log("새로고침하면 날아가버려~~~", err);
     // })
-    dispatch(articleActions.getOnePostDB(articleNumber));
+    dispatch(articleActions.getPostDB(articleNumber));
   }, []);
   return (
     //이미지가 여러 장 들어갈지 한 장만 들어갈지 몰라서 둘다 넣어 놨습니다. SimpleSlider: 여러 장 / Image: 한 장
