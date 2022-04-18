@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Article from "../components/Article";
 
 // 메인페이지에서 검색시 넘어오는 목록페이지
-const articleList = () => {
+const ArticleList = () => {
   return (
     <Container>
       <HeaderMessage>
@@ -84,4 +84,4 @@ const MobileArticleHrBorder = styled.hr`
   display: none;
 `;
 
-export default articleList;
+export default ArticleList;

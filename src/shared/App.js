@@ -1,14 +1,16 @@
 import "./App.css";
 import React from "react";
+import { ConnectedRouter } from "connected-react-router";
 import { BrowserRouter, Route } from "react-router-dom";
+import { history } from "../redux/configStore";
 import Main from "../pages/Main";
-import articleDetail from "../pages/articleDetail";
-import articleList from "../pages/articleList";
-import articleWrite from "../pages/articleWrite";
+import ArticleDetail from "../pages/ArticleDetail";
+import ArticleList from "../pages/ArticleList";
+import ArticleWrite from "../pages/ArticleWrite";
 import Chat from "../pages/Chat";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
-import myPage from "../pages/myPage";
+import MyPage from "../pages/MyPage";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import styled from "styled-components";
@@ -16,22 +18,22 @@ import { ImPencil } from "react-icons/im";
 
 function App() {
   return (
-    <BrowserRouter>
+    <ConnectedRouter history={history}>
       <Header />
       <Route path="/" exact component={Main} />
       <Route path="/signup" exact component={Signup} />
       <Route path="/login" exact component={Login} />
-      <Route path="/detail/:articleNumber" exact component={articleDetail} />
-      <Route path="/list" exact component={articleList} />
-      <Route path="/add" exact component={articleWrite} />
-      <Route path="/edit/:articleNumber" exact component={articleWrite} />
+      <Route path="/detail" exact component={ArticleDetail} />
+      <Route path="/list" exact component={ArticleList} />
+      <Route path="/add" exact component={ArticleWrite} />
+      <Route path="/edit/:articleNumber" exact component={ArticleWrite} />
       <Route path="/chat" exact component={Chat} />
-      <Route path="/mypage" exact component={myPage} />
+      <Route path="/mypage" exact component={MyPage} />
       <Footer />
       <Button>
-        <ImPencil />
+        <ImPencil onClick={() => history.push("/add")} />
       </Button>
-    </BrowserRouter>
+    </ConnectedRouter>
   );
 }
 

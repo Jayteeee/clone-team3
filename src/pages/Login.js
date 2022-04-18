@@ -1,8 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 import { IoIosArrowRoundBack } from "react-icons/io";
-
+import { history } from "../redux/configStore";
+import { useDispatch } from "react-redux";
+import { actionCreators as userActions } from "../redux/modules/user";
 const Login = () => {
+  const dispatch = useDispatch();
+  // const [userInfo, setUserInfo] = React.useState({ id: "", password: "" });
+  const [id, setId] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const login = () => {
+    // if (!(userInfo.userId && userInfo.userPassword)) return;
+    dispatch(userActions.loginDB(id, password));
+  };
   return (
     <React.Fragment>
       <LoginWrap>
@@ -11,31 +21,49 @@ const Login = () => {
         </div>
         <h3>로그인을 해주세요.</h3>
         <div className="icon">
-          <IoIosArrowRoundBack size="40px" color="#6b5244" />
+          <IoIosArrowRoundBack
+            size="40px"
+            color="#6B5244"
+            onClick={() => {
+              history.replace("/");
+            }}
+          />
         </div>
         <div>
           <label>아이디</label>
-          <input type="text"></input>
-
+          <input
+            type="text"
+            onChange={(e) => {
+              console.log("id");
+              // setUserInfo({ ...userInfo, password: e.target.value });
+              setId(e.target.value);
+            }}
+          ></input>
           <label>비밀번호</label>
-          <input type="password"></input>
+          <input
+            type="password"
+            onChange={(e) => {
+              console.log("password");
+              // setUserInfo({ ...userInfo, id: e.target.value });
+              setPassword(e.target.value);
+            }}
+          ></input>
         </div>
-        <button>로그인 하기</button>
+        <button onClick={login}>로그인 하기</button>
       </LoginWrap>
     </React.Fragment>
   );
 };
-
 const LoginWrap = styled.div`
-  width: 400px;
-  height: 400px;
+  width: 30vw;
+  height: auto;
+  display: flex;
+  flex-direction: column;
   border: 2px solid #ef8549;
   border-radius: 10px;
-  margin: auto;
+  margin: 4% auto;
   padding: 50px;
-  margin-top: 150px; //header 삽입후 높이값 수정예정
   position: relative;
-
   .icon {
     position: absolute;
     top: 60px;
@@ -52,7 +80,6 @@ const LoginWrap = styled.div`
     top: 68px;
     left: 50px;
   }
-
   div label {
     font-size: 20px;
     font-weight: bold;
@@ -61,22 +88,22 @@ const LoginWrap = styled.div`
     color: #6b5244;
   }
   div input {
-    width: 400px;
+    width: 24vw;
     height: 30px;
+    padding: 20px;
+    margin: auto;
     border: 1px solid #999;
     border-radius: 7px;
-    margin-bottom: 30px;
+    margin: 0px auto 20px auto;
   }
   button {
     background-color: #ef8549;
     border: 0;
-    width: 200px;
+    width: 12vw;
     height: 50px;
     border-radius: 10px;
     color: #fff;
-    margin: 30px 0px 0px 100px;
     font-size: 15px;
   }
 `;
-
 export default Login;

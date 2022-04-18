@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { IoIosArrowRoundBack } from "react-icons/io";
 
-const myPage = () => {
+const MyPage = () => {
   return (
     <React.Fragment>
       <MypageWrap>
@@ -144,4 +144,4 @@ const Image = styled.img`
   width: 200px;
   height: 200px;
 `;
-export default myPage;
+export default MyPage;

@@ -2,7 +2,7 @@ import React from "react";
 import SimpleSlider from "./SimpleSlider";
 import styled from "styled-components";
 
-const articleDetail = () => {
+const ArticleDetail = () => {
   return (
     //이미지가 여러 장 들어갈지 한 장만 들어갈지 몰라서 둘다 넣어 놨습니다. SimpleSlider: 여러 장 / Image: 한 장
     <div>
@@ -80,4 +80,4 @@ const Contents = styled.div`
     margin: 50px auto 0px auto;
   }
 `;
-export default articleDetail;
+export default ArticleDetail;

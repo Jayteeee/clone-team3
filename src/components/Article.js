@@ -22,7 +22,6 @@ const Article = () => {
             <ArticleSubInfo>
               <ArticleWatch>
                 <img
-                  class="watch-icon"
                   alt="Watch count"
                   src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/like-8111aa74d4b1045d7d5943a901896992574dd94c090cef92c26ae53e8da58260.svg"
                 />{" "}
@@ -54,7 +53,6 @@ const Article = () => {
             <ArticleSubInfo>
               <ArticleWatch>
                 <img
-                  class="watch-icon"
                   alt="Watch count"
                   src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/like-8111aa74d4b1045d7d5943a901896992574dd94c090cef92c26ae53e8da58260.svg"
                 />{" "}
