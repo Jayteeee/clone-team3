@@ -3,8 +3,11 @@ import Slider from "react-slick";
 import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import { useSelector } from "react-redux";
 const SimpleSlider = () => {
+  const article_list = useSelector((state) => state.article.list);
+  console.log(article_list);
+  const article_data = article_list[0];
   const settings = {
     arrows: false, //화살표 x
     dots: true, //이동 점
@@ -14,24 +17,22 @@ const SimpleSlider = () => {
     // autoplay: true, //자동 플레이
     autoplaySpeed: 5000, //넘어가는 속도 ms
   };
-
   return (
     <>
       <Styled_Slide {...settings}>
         <div className="card1">
-          <img src="img/만두.jpg" />
+          <img src={article_data.articleImageUrl} />
         </div>
         <div className="card2">
-          <img src="img/만두2.jpg" />
+          <img src="./img/만두2.jpg" />
         </div>
         <div className="card3">
-          <img src="img/냥냥.jpg" />
+          <img src="./img/만두.jpg" />
         </div>
       </Styled_Slide>
     </>
   );
 };
-
 const Styled_Slide = styled(Slider)`
   .slick-list {
     //얘로 크기조정
@@ -50,5 +51,4 @@ const Styled_Slide = styled(Slider)`
     align-items: center;
   }
 `;
-
 export default SimpleSlider;

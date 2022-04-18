@@ -2,8 +2,62 @@ import React from "react";
 import styled from "styled-components";
 import { IoMdArrowBack } from "react-icons/io";
 import { MdPhotoCamera } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import { actionCreators as imageActions } from "../redux/modules/image";
+import { actionCreators as articleActions } from "../redux/modules/article";
 
-const articleWrite = () => {
+const ArticleWrite = () => {
+  const dispatch = useDispatch();
+  const preview = useSelector((state) => state.image.preview);
+  console.log(useSelector((state) => state));
+
+  const fileInput = React.useRef(null);
+  console.log(fileInput);
+  // const file = fileInput.current.files[0];
+
+  const [article, setArticle] = React.useState({
+    articleTitle: "제목",
+    articleContent: "내용",
+    articlePrice: "1000",
+  });
+
+  const selectFile = (e) => {
+    const reader = new FileReader();
+    const file = fileInput.current.files[0];
+
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      dispatch(imageActions.setPreview(reader.result));
+    };
+  };
+
+  // computed property names 문법 (키값 동적 할당)
+  const handleForm = (e) => {
+    setArticle({
+      ...article,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const addArticleDB = () => {
+    if (!fileInput.current || fileInput.current.files.length === 0) {
+      window.alert("파일을 선택해주세요!");
+      return;
+    }
+    const file = fileInput.current.files[0];
+    console.log(file);
+    const formData = new FormData();
+    formData.append("articleImageUrl", file);
+    formData.append("articleTitle", article.articleTitle);
+    formData.append("articleContent", article.articleContent);
+    formData.append("articlePrice", article.articlePrice);
+    console.log("formData", formData);
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+    return dispatch(articleActions.addArticleDB(formData));
+  };
+
   return (
     //글쓰기&수정하기 컴포넌트 입니다. 사용하실 때 조건을 걸어서 제목만 수정하기로 변경해 주시면 될 것 같습니다.
     <Box>
@@ -12,7 +66,7 @@ const articleWrite = () => {
           <IoMdArrowBack />
         </div>
         <h2>중고거래 글쓰기</h2>
-        <p>완료</p>
+        <p onClick={addArticleDB}>완료</p>
       </Title>
 
       <div className="imgBox">
@@ -20,26 +74,40 @@ const articleWrite = () => {
           <MdPhotoCamera size="30px" color="black" />
           0/3
         </label>
-        <input type="file" id="image" />
+        <input type="file" id="image" ref={fileInput} onChange={selectFile} />
 
-        <label htmlFor="image">preview</label>
-        <input type="file" id="image" />
+        <PreviewImage
+          alt={article.articleTitle}
+          htmlFor="image"
+          src={preview ? preview : null}
+        ></PreviewImage>
 
-        <label htmlFor="image">preview</label>
-        <input type="file" id="image" />
-
-        <label htmlFor="image">preview</label>
-        <input type="file" id="image" />
+        <PreviewImage />
+        <PreviewImage />
       </div>
 
       <hr />
 
       <Content>
-        <input type="text" placeholder="제목" />
-        <input type="text" placeholder="w 가격(선택 사항)" />
+        <input
+          name="articleTitle"
+          type="text"
+          placeholder="제목"
+          onChange={handleForm}
+        />
+        <input
+          name="articlePrice"
+          type="text"
+          placeholder="￦ 가격(선택 사항)"
+          onChange={handleForm}
+        />
       </Content>
 
-      <Input placeholder="내용을 입력해 주세요." />
+      <Input
+        name="articleContent"
+        placeholder="내용을 입력해 주세요."
+        onChange={handleForm}
+      />
     </Box>
   );
 };
@@ -124,4 +192,12 @@ const Input = styled.input`
   border-radius: 10px;
 `;
 
-export default articleWrite;
+const PreviewImage = styled.img`
+  width: 6rem;
+  height: 6rem;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  margin-left: 0.5rem;
+`;
+
+export default ArticleWrite;
