@@ -10,6 +10,8 @@ const SET_ARTICLE = "SET_ARTICLE";
 const SET_ONE_ARTICLE = "SET_ONE_ARTICLE";
 const EDIT_ARTICLE = "EDIT_ARTICLE";
 const DELETE_ARTICLE = "DELETE_ARTICLE";
+
+const SEARCH_KEYWORD = "SEARCH_KEYWORD";
 //액션 크리에이터
 const addArticle = createAction(ADD_ARTICLE, (article) => ({ article }));
 const setArticle = createAction(SET_ARTICLE, (article_list) => ({
@@ -25,6 +27,10 @@ const editArticle = createAction(EDIT_ARTICLE, (articleNumber, article) => ({
 const deleteArticle = createAction(DELETE_ARTICLE, (articleNumber) => ({
   articleNumber,
 }));
+const searchKeyword = createAction(SEARCH_KEYWORD, (keyword) => ({
+  keyword,
+}));
+
 //초기값 설정
 const initialState = {
   list: [
@@ -49,7 +55,10 @@ const initialState = {
       //       userId: "duman"}],
     },
   ],
+  article: [],
+  keyword: "",
 };
+
 //미들웨어 설정
 const addArticleDB = (formData) => {
   return function (dispatch, getState, { history }) {
@@ -68,7 +77,6 @@ const addArticleDB = (formData) => {
     })
       .then((res) => {
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
-        console.log(res);
         dispatch(addArticle(res.data.create));
         dispatch(imageActions.resetPreview());
         history.replace(`/detail/${res.data.createArticles.articleNumber}`);
@@ -79,6 +87,7 @@ const addArticleDB = (formData) => {
       });
   };
 };
+
 //게시글 전체 목록 불러오기
 const getArticleDB = () => {
   return function (dispatch, getState, { history }) {
@@ -92,7 +101,6 @@ const getArticleDB = () => {
       },
     })
       .then((doc) => {
-        console.log(doc.data.List);
         const _post = doc.data.List;
         dispatch(setArticle(_post)); //setPost에 _post 담아서 리듀서로 던지자
       })
@@ -101,6 +109,30 @@ const getArticleDB = () => {
       });
   };
 };
+
+//검색창 입력값 보내기
+const SearchDataDB = (keyword) => {
+  return function (dispatch, getState, { history }) {
+    // const queryClient = new QueryClient();
+    axios({
+      method: "get",
+      url: `http://3.35.27.190/article/list/${keyword}`,
+      headers: {
+        Authorization: `${getCookie("isLogin")}`,
+      },
+    })
+      .then((response) => {
+        // console.log(response);
+        dispatch(searchKeyword(response.data.list));
+        console.log(response);
+        history.push(`/list/${keyword}`);
+      })
+      .catch((err) => {
+        console.log("검색 결과를 표시 할 수 없습니다.", err);
+      });
+  };
+};
+
 //상세페이지로 데이터 하나씩 불러오기
 const getOneArticleDB = (articleNumber) => {
   return function (dispatch, getState, { history }) {
@@ -129,19 +161,12 @@ const getOneArticleDB = (articleNumber) => {
 };
 
 //상세페이지 수정하기
-
 const editArticleDB = (articleNumber = null, formData = {}) => {
   return function (dispatch, getState, { history }) {
     if (!articleNumber) {
       window.alert("게시물 정보가 없어요!");
       return;
     }
-    // console.log(getState());
-    // const _article_idx = getState().article.list.findIndex(
-    //   (p) => p.articleNumber === articleNumber
-    // );
-    // const _article = getState().article.list[_article_idx];
-
     axios({
       method: "post",
       url: `http://3.35.27.190/article/edit/${articleNumber}`,
@@ -191,34 +216,21 @@ export default handleActions(
   {
     [ADD_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        console.log(state, draft);
         draft.article.list.push(action.payload.article);
       }),
     [SET_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        console.log("여기는 set_post 리듀서");
         draft.list = action.payload.article_list;
-        // draft.list = draft.list.reduce((acc,cur)=>{
-        //   if(acc.findIndex(a=>a.articleNumber===cur.articleNumber) === -1){//중복된 값이 없을때
-        //       return [...acc,cur];
-        //   }else{
-        //       acc[acc.findIndex(a=>a.articleNumber===cur.articleNumber)]=cur;//인덱스값
-        //       return acc;
-        //   }
-        // },[]);
       }),
     [SET_ONE_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
         draft.list = action.payload.article.List.list;
-        // console.log("여기는 add_post 리듀서")
       }),
-
     [EDIT_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
         let idx = draft.list.findIndex(
           (p) => p.articleNumber === action.payload.articleNumber
         );
-
         draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
       }),
     [DELETE_ARTICLE]: (state, action) =>
@@ -227,9 +239,15 @@ export default handleActions(
           (p) => p.articleNumber !== action.payload.articleNumber[0]
         );
       }),
+    //검색창
+    [SEARCH_KEYWORD]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list = action.payload.keyword;
+      }),
   },
   initialState
 );
+
 const actionCreators = {
   addArticle,
   addArticleDB,
@@ -238,5 +256,7 @@ const actionCreators = {
   getOneArticleDB,
   editArticleDB,
   deleteArticleDB,
+  searchKeyword,
+  SearchDataDB,
 };
 export { actionCreators };

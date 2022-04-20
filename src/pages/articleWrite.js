@@ -64,7 +64,7 @@ const ArticleWrite = (props) => {
 
   const addArticleDB = () => {
     if (!fileInput.current || fileInput.current.files.length === 0) {
-      window.alert("파일을 선택해주세요!");
+      window.alert("이미지파일을 등록해주세요!");
       return;
     }
     const file = fileInput.current.files[0];
@@ -81,7 +81,7 @@ const ArticleWrite = (props) => {
 
   const editArticleDB = () => {
     if (!fileInput.current || fileInput.current.files.length === 0) {
-      window.alert("파일을 선택해주세요!");
+      window.alert("이미지파일을 등록해주세요!");
       return;
     }
     const file = fileInput.current.files[0];
