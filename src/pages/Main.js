@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 // 메인페이지
@@ -123,7 +123,6 @@ const Container = styled.div``;
 const HomeMainSectionTop = styled.section`
   padding-top: 24px;
   background-color: #fbf7f2;
-}
 `;
 
 const HomeMainTop = styled.div`
@@ -149,7 +148,7 @@ const HomeMainTitle = styled.h1`
 `;
 
 const TextM = styled.p`
-  font-size: 1.6rem
+  font-size: 1.6rem;
   line-height: 1.5;
   letter-spacing: -0.3px;
 `;
@@ -189,10 +188,9 @@ const HomeMainContent = styled.div`
 `;
 
 const HomeMainImage = styled.div`
-background-size: 532px 684px;
-width: 532px;
-height: 684px;
-}
+  background-size: 532px 684px;
+  width: 532px;
+  height: 684px;
 `;
 
 const ImageMiddle = styled.img`

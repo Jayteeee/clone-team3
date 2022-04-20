@@ -1,12 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 import { ImPencil } from "react-icons/im";
+import { history } from "../redux/configStore";
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
+import { actionCreators as articleActions } from "../redux/modules/article";
+import SearchList from "../pages/SearchList";
 // 모든 페이지에 나오는 헤더창
 const Header = () => {
   const dispatch = useDispatch();
   const [isLogin, setIsLogin] = React.useState(false);
+
   React.useEffect(() => {
     let cookie = document.cookie;
     if (cookie) {
@@ -29,21 +33,7 @@ const Header = () => {
               src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/logo-basic-24b18257ac4ef693c02233bf21e9cb7ecbf43ebd8d5b40c24d99e14094a44c81.svg"
             />
           </Link>
-          <Section>
-            <div>
-              <input
-                width=""
-                type="text"
-                placeholder="물품명을 검색해보세요!"
-              />
-              <button>
-                <img
-                  alt="Search"
-                  src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/search-icon-7008edd4f9aaa32188f55e65258f1c1905d7a9d1a3ca2a07ae809b5535380f14.svg"
-                />
-              </button>
-            </div>
-          </Section>
+          <SearchList />
           <FixedBarMenu>
             <Buttons>
               <ButtonText onClick={logout}>로그아웃</ButtonText>
@@ -81,7 +71,11 @@ const Header = () => {
         <Section>
           <div>
             <input width="" type="text" placeholder="물품명을 검색해보세요!" />
-            <button>
+            <button
+              onClick={() => {
+                window.alert("로그인 후 검색이 가능 합니다.");
+              }}
+            >
               <img
                 alt="Search"
                 src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/search-icon-7008edd4f9aaa32188f55e65258f1c1905d7a9d1a3ca2a07ae809b5535380f14.svg"
