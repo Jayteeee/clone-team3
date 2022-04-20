@@ -8,26 +8,24 @@ const ArticleList = (props) => {
   const dispatch = useDispatch();
   const article_list = useSelector((state) => state.article.list);
   console.log(article_list);
-  const article_idx = article_list.findIndex((p) => p.articleNumber);
-  console.log(article_idx);
-  const article = article_list[article_idx];
-  console.log(article);
-  // const search_gu = article_data.userGu;
-  // console.log(search_gu);
+
   React.useEffect(() => {
     // if (article_list.length === 0) {//게시글이 0개면 리스트 불러와
-    dispatch(articleActions.getPostDB());
+    dispatch(articleActions.getArticleDB());
     // }
   }, []);
+
   return (
     <Container>
       <HeaderMessage>
         <HeaderMessageContainer>
           <RegionMatching>
-            <RegionName>{article.userGu}</RegionName> 근처를 검색하고 있어요.
+            <RegionName>{article_list[0].userGu}</RegionName> 근처를 검색하고
+            있어요.
           </RegionMatching>
         </HeaderMessageContainer>
       </HeaderMessage>
+
       <Result>
         <ResultContainer>
           <ArticlesWrap>

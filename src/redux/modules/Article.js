@@ -56,6 +56,7 @@ const initialState = {
   article: [],
   keyword: "",
 };
+
 //미들웨어 설정
 const addArticleDB = (formData) => {
   return function (dispatch, getState, { history }) {
@@ -74,9 +75,9 @@ const addArticleDB = (formData) => {
     })
       .then((res) => {
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
-        dispatch(addArticle(_article));
+        dispatch(addArticle(res.data.create));
         dispatch(imageActions.resetPreview());
-        history.replace("/list"); //본인이 작성한 게시물 상세페이지로 이동해야함
+        history.replace(`/detail/${res.data.createArticles.articleNumber}`);
       })
       .catch((err) => {
         // 요청이 정상적으로 끝나지 않았을 때(오류 났을 때) 수행할 작업!
@@ -84,6 +85,7 @@ const addArticleDB = (formData) => {
       });
   };
 };
+
 //게시글 전체 목록 불러오기
 const getArticleDB = () => {
   return function (dispatch, getState, { history }) {
@@ -105,6 +107,7 @@ const getArticleDB = () => {
       });
   };
 };
+
 //검색창 입력값 보내기
 const SearchDataDB = (keyword) => {
   return function (dispatch, getState, { history }) {
@@ -127,6 +130,7 @@ const SearchDataDB = (keyword) => {
       });
   };
 };
+
 //상세페이지로 데이터 하나씩 불러오기
 const getOneArticleDB = (articleNumber) => {
   return function (dispatch, getState, { history }) {
@@ -173,7 +177,7 @@ const editArticleDB = (articleNumber = null, formData = {}) => {
       .then((res) => {
         console.log(res);
         dispatch(editArticle(articleNumber, { article: res.article }));
-        history.replace("/");
+        history.replace(`/detail/${articleNumber}`);
       })
       .catch((err) => {
         window.alert("앗! 게시글 업데이트에 문제가 있어요!");
@@ -193,7 +197,7 @@ const deleteArticleDB = (articleNumber) => {
     })
       .then(() => {
         window.alert("삭제 되었습니다!");
-        console.log("삭제 되었습니다!");
+        history.replace("/list");
       })
       .catch((error) => {
         window.alert("삭제 도중 문제가 생겼습니다!");
@@ -207,7 +211,7 @@ export default handleActions(
   {
     [ADD_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        draft.article.push(action.payload.article);
+        draft.article.list.push(action.payload.article);
       }),
     [SET_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
@@ -238,6 +242,7 @@ export default handleActions(
   },
   initialState
 );
+
 const actionCreators = {
   addArticle,
   addArticleDB,

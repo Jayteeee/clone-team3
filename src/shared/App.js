@@ -13,8 +13,15 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ConnectedRouter } from "connected-react-router";
 import { history } from "../redux/configStore";
+import { useDispatch } from "react-redux";
+import { actionCreators as userActions } from "../redux/modules/user";
 
 function App() {
+  const dispatch = useDispatch();
+  let cookie = document.cookie;
+  if (cookie) {
+    dispatch(userActions.getUserDB());
+  }
   return (
     <ConnectedRouter history={history}>
       <Header />

@@ -16,8 +16,10 @@ const ArticleWrite = (props) => {
   const _article = is_edit
     ? article_list.find((p) => +p.articleNumber === +articleNumber)
     : null;
+
   const fileInput = React.useRef(null);
   // const file = fileInput.current.files[0];
+
   React.useEffect(() => {
     if (is_edit) {
       dispatch(articleActions.getOneArticleDB(articleNumber));
@@ -233,7 +235,9 @@ const PreviewImage = styled.img`
   border-radius: 10px;
   margin-left: 0.5rem;
 `;
+
 const Complete = styled.p`
   cursor: pointer;
 `;
+
 export default ArticleWrite;

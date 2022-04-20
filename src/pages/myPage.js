@@ -23,7 +23,6 @@ const MyPage = () => {
     setDong(userInfo?.userDong);
     setGu(userInfo?.userGu);
   }, [userInfo]);
-
   const [nickName, setnickName] = React.useState(
     userInfo?.userNickname ? userInfo.userNickname : ""
   );
@@ -60,7 +59,6 @@ const MyPage = () => {
     }
     dispatch(userActions.editUserDB(formData));
   };
-
   const map = async () => {
     //현재 내 위치 찾기(좌표)
     navigator.geolocation.getCurrentPosition(function (pos) {

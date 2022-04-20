@@ -7,14 +7,12 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 const Signup = () => {
   const dispatch = useDispatch();
-
   const [nickName, setnickName] = React.useState("");
   const [id, setId] = React.useState("");
   const [pwd, setPwd] = React.useState("");
   const [pwdCheck, setPwdCheck] = React.useState("");
   const [dong, setDong] = React.useState("");
   const [gu, setGu] = React.useState("");
-
   const map = async () => {
     //현재 내 위치 찾기(좌표)
     navigator.geolocation.getCurrentPosition(function (pos) {

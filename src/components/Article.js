@@ -7,8 +7,10 @@ const Article = (props) => {
   const history = useHistory();
   return (
     <Container
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         history.push(`/detail/${props.articleNumber}`);
+        console.log(props);
       }}
     >
       <FleaMarketArticle>
