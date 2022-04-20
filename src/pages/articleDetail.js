@@ -3,45 +3,74 @@ import SimpleSlider from "./SimpleSlider";
 import styled from "styled-components";
 import Article from "../components/Article";
 import ArticleList from "./ArticleList";
-import { BiHeartCircle } from "react-icons/bi";
+import { AiOutlineHeart } from "react-icons/ai";
+import { AiTwotoneHeart } from "react-icons/ai";
 import { useHistory } from "react-router-dom";
 import { actionCreators as articleActions } from "../redux/modules/article";
+//좋아요 모듈
+import { actionCreators as likeActions } from "../redux/modules/like";
+
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+
 const ArticleDetail = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const articleNumber = props.match.params.articleNumber;
-  console.log(articleNumber);
+
+  //좋아요 prop값
+  const articlelike = props;
+  console.log(props);
+  const articleNum = articlelike.match.params.articleNumber; //게시물 번호
+  console.log(articleNum);
+
+  //좋아요
+  const [like, setLike] = React.useState("");
+  const [addlike, setAddLike] = React.useState("");
+  const [deletelike, setDeleteLike] = React.useState("");
+
+  //좋아요 추가
+  const addLike = () => {
+    setLike(true);
+    setAddLike(1);
+    setDeleteLike(0);
+    // dispatch(likeActions.addLikeDB(articleNumber));
+  };
+
+  // const articleNumber = props.match.params.articleNumber;
+  // console.log(articleNumber);
   const article_list = useSelector((state) => state.article.list);
   console.log(article_list);
   // const article_data = article_list[0]
   const article_idx = article_list.findIndex(
-    (p) => p.articleNumber == articleNumber
+    (p) => p.articleNumber == articleNum
   );
   //전체값의 순서랑 게시물 하나의 번호 비교
   console.log(article_idx);
   const article_data = article_list[article_idx];
-  //게시물이 있니? 있으면 넣고 없으면 null 넣어줘
-  const [article, setArticle] = React.useState(
-    article_data ? article_data : null
-  );
+
+  const deleteArticle = () => {
+    dispatch(articleActions.deleteArticleDB(articleNum));
+  };
+
   React.useEffect(() => {
-    //   axios({
-    //     method: "POST",
-    //     // url: ``, //서버 주소
-    //     url:`https://6253d1d889f28cf72b5335ef.mockapi.io/datail` //가상 데이터 저장소
-    //   }).then((response) => {
-    //     console.log(response.data);
-    //   }).catch((err) => {
-    //   console.log("새로고침하면 날아가버려~~~", err);
-    // })
-    dispatch(articleActions.getPostDB(articleNumber));
+    dispatch(articleActions.getOneArticleDB(articleNum));
   }, []);
+
+  //새로고침
+  React.useEffect(() => {}, []);
+
   return (
     //이미지가 여러 장 들어갈지 한 장만 들어갈지 몰라서 둘다 넣어 놨습니다. SimpleSlider: 여러 장 / Image: 한 장
     <div>
       <Box>
+        <button
+          onClick={() => {
+            // e.stopPropagation();
+            history.push(`/edit/${articleNum}`);
+          }}
+        >
+          수정
+        </button>
+        <button onClick={deleteArticle}>삭제</button>
         <SimpleSlider />
         {/* <Image />이미지 한 장일 경우 */}
         <User>
@@ -57,13 +86,32 @@ const ArticleDetail = (props) => {
           >
             1:1 채팅
           </Button>
-          <Like>
-            <BiHeartCircle
-              className="likeicon"
-              size="50px"
-              color="#D2D2D2"
-              onClick={() => {}}
+          {/* 온클릭 이벤트 : 좋아요 누르면 채워진 하트, 좋아요 취소하면 비워진 하트 기능
+          {(like && (
+            <AiFillHeart
+              size="28"
+              style={{ margin: "8px" }}
+              onClick={delLike}
+              color="red"
             />
+          )) || (
+              <AiOutlineHeart
+                size="28"
+                style={{ margin: "8px" }}
+                onClick={addLike}
+              />
+            )} */}
+          <Like>
+            {(like && (
+              <AiTwotoneHeart //좋아요 눌렀을때 채워진 하트
+                className="likeicon"
+                size="40px"
+                color="#ef8549"
+                // onClick={delLike}
+              />
+            )) || (
+              <AiOutlineHeart size="40px" color="#ef8549" onClick={addLike} />
+            )}
           </Like>
         </User>
         <hr />
@@ -121,7 +169,7 @@ const Button = styled.button`
 `;
 const Like = styled.div`
   position: absolute;
-  top: 30%;
+  top: 35%;
   right: 0;
   cursor: pointer;
 `;

@@ -3,26 +3,26 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 // import { useSelector } from "react-redux";
 const Article = (props) => {
-  // console.log(props);
   const history = useHistory();
   return (
-    <Container onClick={()=>{history.push(`/detail/${props.articleNumber}`)}}>
-      <FleaMarketArticle >
+    <Container
+      onClick={() => {
+        history.push(`/detail/${props.articleNumber}`);
+      }}
+    >
+      <FleaMarketArticle>
         <FleaMarketArticleLink>
           <CardPhoto>
-            <img
-              alt="사진이 왜 안나오지"
-              src={props.articleImageUrl}
-            />
+            <img alt="사진이 왜 안나오지" src={props.articleImageUrl} />
           </CardPhoto>
           <ArticleInfo>
             <ArticleTitleContent>
               <ArticleTitle>{props.articleTitle}</ArticleTitle>
-              <ArticleContent>
-                {props.articleContent}
-              </ArticleContent>
+              <ArticleContent>{props.articleContent}</ArticleContent>
             </ArticleTitleContent>
-            <ArticleRegionName>{props.userGu + " " + props.userDong}</ArticleRegionName>
+            <ArticleRegionName>
+              {props.userGu + " " + props.userDong}
+            </ArticleRegionName>
             <ArticlePrice>{props.articlePrice}원</ArticlePrice>
             <ArticleSubInfo>
               <ArticleWatch>
@@ -37,22 +37,22 @@ const Article = (props) => {
           </ArticleInfo>
         </FleaMarketArticleLink>
       </FleaMarketArticle>
-</Container>
-  )
-}
+    </Container>
+  );
+};
 //카드 하나
 const Container = styled.div`
-display:flex;
-flex-direction:column;
-max-width:239px;
-min-height:150px;
-justify-content:left;
+  display: flex;
+  flex-direction: column;
+  max-width: 239px;
+  min-height: 150px;
+  justify-content: left;
 `;
 const FleaMarketArticle = styled.article`
   position: relative;
   text-align: left;
   display: inline-block;
-  margin:0px 30px 40px 0px;
+  margin: 0px 30px 40px 0px;
   cursor: pointer;
 `;
 const FleaMarketArticleLink = styled.a`
@@ -63,7 +63,7 @@ const FleaMarketArticleLink = styled.a`
 const CardPhoto = styled.div`
   height: 160px;
   overflow: hidden;
-  background-color: #F8F9FA;
+  background-color: #f8f9fa;
   border-radius: 8px;
   & > img {
     width: 100%;
@@ -91,7 +91,7 @@ const ArticleRegionName = styled.p`
   font-size: 14px;
   line-height: 18px;
   margin-top: 6px;
-  color: #868E96;
+  color: #868e96;
 `;
 const ArticlePrice = styled.p`
   color: #212529;
@@ -109,5 +109,5 @@ const ArticleWatch = styled.span`
     width: 13px;
     margin: 0 0 -1px 4px;
   }
-`
+`;
 export default Article;

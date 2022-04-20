@@ -13,8 +13,15 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { ConnectedRouter } from "connected-react-router";
 import { history } from "../redux/configStore";
+import { actionCreators as userActions } from "../redux/modules/user";
+import { useDispatch } from "react-redux";
 
 function App() {
+  const dispatch = useDispatch();
+  let cookie = document.cookie;
+  if (cookie) {
+    dispatch(userActions.getUserDB());
+  }
   return (
     <ConnectedRouter history={history}>
       <Header />
@@ -23,6 +30,7 @@ function App() {
       <Route path="/login" exact component={Login} />
       <Route path="/detail/:articleNumber" exact component={ArticleDetail} />
       <Route path="/list" exact component={ArticleList} />
+      <Route path="/list/:keyword" exact component={ArticleList} />
       <Route path="/add" exact component={ArticleWrite} />
       <Route path="/edit/:articleNumber" exact component={ArticleWrite} />
       <Route path="/chat" exact component={Chat} />
