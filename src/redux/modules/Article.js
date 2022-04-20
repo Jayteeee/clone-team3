@@ -6,17 +6,34 @@ import axios from "axios";
 import { getCookie } from "../../shared/Cookie";
 //액션 설정
 const ADD_ARTICLE = "ADD_ARTICLE";
-const SET_POST = "SET_POST";
-const SET_ONE_POST = "SET_ONE_POST";
+const SET_ARTICLE = "SET_ARTICLE";
+const SET_ONE_ARTICLE = "SET_ONE_ARTICLE";
+const EDIT_ARTICLE = "EDIT_ARTICLE";
+const DELETE_ARTICLE = "DELETE_ARTICLE";
+const SEARCH_KEYWORD = "SEARCH_KEYWORD";
 //액션 크리에이터
 const addArticle = createAction(ADD_ARTICLE, (article) => ({ article }));
-const setPost = createAction(SET_POST, (article_list) => ({ article_list }));
-const setOnePost = createAction(SET_ONE_POST, (article) => ({ article }));
+const setArticle = createAction(SET_ARTICLE, (article_list) => ({
+  article_list,
+}));
+const setOneArticle = createAction(SET_ONE_ARTICLE, (article) => ({
+  article,
+}));
+const editArticle = createAction(EDIT_ARTICLE, (articleNumber, article) => ({
+  articleNumber,
+  article,
+}));
+const deleteArticle = createAction(DELETE_ARTICLE, (articleNumber) => ({
+  articleNumber,
+}));
+const searchKeyword = createAction(SEARCH_KEYWORD, (keyword) => ({
+  keyword,
+}));
 //초기값 설정
 const initialState = {
   list: [
     {
-      articleNumber: 1, //게시물 넘버
+      articleNumber: 0, //게시물 넘버
       userId: "mandulover", //유저 아이디
       userNickname: "jungwon", //유저 닉네임
       userGu: "인천 부평구", //유저가 사는 구
@@ -37,6 +54,7 @@ const initialState = {
     },
   ],
   article: [],
+  keyword: "",
 };
 //미들웨어 설정
 const addArticleDB = (formData) => {
@@ -47,7 +65,7 @@ const addArticleDB = (formData) => {
     };
     axios({
       method: "post",
-      url: "http://3.35.25.178/article/add",
+      url: "http://3.35.27.190/article/add",
       data: formData,
       headers: {
         "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
@@ -56,12 +74,9 @@ const addArticleDB = (formData) => {
     })
       .then((res) => {
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
-        console.log(res);
         dispatch(addArticle(_article));
         dispatch(imageActions.resetPreview());
-        for (let pair of formData.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
-        }
+        history.replace("/list"); //본인이 작성한 게시물 상세페이지로 이동해야함
       })
       .catch((err) => {
         // 요청이 정상적으로 끝나지 않았을 때(오류 났을 때) 수행할 작업!
@@ -70,33 +85,58 @@ const addArticleDB = (formData) => {
   };
 };
 //게시글 전체 목록 불러오기
-const getPostDB = () => {
+const getArticleDB = () => {
   return function (dispatch, getState, { history }) {
     axios({
       method: "get",
       // url: ``, //서버 주소
-      url: `https://6253d1d889f28cf72b5335ef.mockapi.io/list`, //가상 데이터 저장소
+      // url: `https://6253d1d889f28cf72b5335ef.mockapi.io/list`, //가상 데이터 저장소
+      url: `http://3.35.27.190/article/list`, //가상 데이터 저장소
+      headers: {
+        Authorization: `${getCookie("isLogin")}`,
+      },
     })
       .then((doc) => {
-        console.log(doc.data);
-        const _post = doc.data;
-        dispatch(setPost(_post)); //setPost에 _post 담아서 리듀서로 던지자
+        const _post = doc.data.List;
+        dispatch(setArticle(_post)); //setPost에 _post 담아서 리듀서로 던지자
       })
       .catch((err) => {
-        console.log("게시글 목록을 불러오지 못했습니다", err);
+        console.log(err);
+      });
+  };
+};
+//검색창 입력값 보내기
+const SearchDataDB = (keyword) => {
+  return function (dispatch, getState, { history }) {
+    // const queryClient = new QueryClient();
+    axios({
+      method: "get",
+      url: `http://3.35.27.190/article/list/${keyword}`,
+      headers: {
+        Authorization: `${getCookie("isLogin")}`,
+      },
+    })
+      .then((response) => {
+        // console.log(response);
+        dispatch(searchKeyword(response.data.list));
+        console.log(response);
+        history.push(`/list/${keyword}`);
+      })
+      .catch((err) => {
+        console.log("검색 결과를 표시 할 수 없습니다.", err);
       });
   };
 };
 //상세페이지로 데이터 하나씩 불러오기
-const getOnePostDB = (articleNumber) => {
+const getOneArticleDB = (articleNumber) => {
   return function (dispatch, getState, { history }) {
     axios({
       method: "get",
-      data: {
-        articleNumber: articleNumber,
-      },
       // url: ``, //서버 주소
-      url: `https://6253d1d889f28cf72b5335ef.mockapi.io/detail/detail${articleNumber}`, //가상 데이터 저장소
+      url: `http://3.35.27.190/article/detail/${articleNumber}`, //가상 데이터 저장소
+      headers: {
+        Authorization: `${getCookie("isLogin")}`,
+      },
     })
       .then((response) => {
         console.log(response);
@@ -106,11 +146,60 @@ const getOnePostDB = (articleNumber) => {
         // article.forEach((product) => { //반복문 돌려
         //   article_list.push({userId: product.userId, ...product }); //현재 데이터에 유저 아이디를 추가할거야
         // });
-        dispatch(setOnePost(articleNumber)); //이제 리듀서로 던지자
+        dispatch(setOneArticle(article)); //이제 리듀서로 던지자
       })
       .catch((err) => {
         console.log("상세페이지를 불러오지 못했습니다", err);
       });
+  };
+};
+//상세페이지 수정하기
+const editArticleDB = (articleNumber = null, formData = {}) => {
+  return function (dispatch, getState, { history }) {
+    if (!articleNumber) {
+      window.alert("게시물 정보가 없어요!");
+      return;
+    }
+    axios({
+      method: "post",
+      url: `http://3.35.27.190/article/edit/${articleNumber}`,
+      // url: `https://625cf0b495cd5855d618229e.mockapi.io/article/1`,
+      data: formData,
+      headers: {
+        "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+        Authorization: `${getCookie("isLogin")}`,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        dispatch(editArticle(articleNumber, { article: res.article }));
+        history.replace("/");
+      })
+      .catch((err) => {
+        window.alert("앗! 게시글 업데이트에 문제가 있어요!");
+        console.log("앗! 게시글 업데이트에 문제가 있어요!", err);
+      });
+  };
+};
+const deleteArticleDB = (articleNumber) => {
+  return function (dispatch, getState, { history }) {
+    axios({
+      method: "delete",
+      url: `http://3.35.27.190/article/delete/${articleNumber}`,
+      headers: {
+        "Content-Type": `multipart/form-data`,
+        Authorization: `${getCookie("isLogin")}`,
+      },
+    })
+      .then(() => {
+        window.alert("삭제 되었습니다!");
+        console.log("삭제 되었습니다!");
+      })
+      .catch((error) => {
+        window.alert("삭제 도중 문제가 생겼습니다!");
+        console.error("삭제에 문제가 생겼습니다.", error);
+      });
+    dispatch(deleteArticle([articleNumber]));
   };
 };
 //리듀서
@@ -118,26 +207,33 @@ export default handleActions(
   {
     [ADD_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        console.log(state, draft);
         draft.article.push(action.payload.article);
       }),
-    [SET_POST]: (state, action) =>
+    [SET_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        console.log("여기는 set_post 리듀서");
         draft.list = action.payload.article_list;
-        // draft.list = draft.list.reduce((acc,cur)=>{
-        //   if(acc.findIndex(a=>a.articleNumber===cur.articleNumber) === -1){//중복된 값이 없을때
-        //       return [...acc,cur];
-        //   }else{
-        //       acc[acc.findIndex(a=>a.articleNumber===cur.articleNumber)]=cur;//인덱스값
-        //       return acc;
-        //   }
-        // },[]);
       }),
-    [SET_ONE_POST]: (state, action) =>
+    [SET_ONE_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        draft.list = action.payload.article;
-        // console.log("여기는 add_post 리듀서")
+        draft.list = action.payload.article.List.list;
+      }),
+    [EDIT_ARTICLE]: (state, action) =>
+      produce(state, (draft) => {
+        let idx = draft.list.findIndex(
+          (p) => p.articleNumber === action.payload.articleNumber
+        );
+        draft.list[idx] = { ...draft.list[idx], ...action.payload.post };
+      }),
+    [DELETE_ARTICLE]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list = draft.list.filter(
+          (p) => p.articleNumber !== action.payload.articleNumber[0]
+        );
+      }),
+    //검색창
+    [SEARCH_KEYWORD]: (state, action) =>
+      produce(state, (draft) => {
+        draft.list = action.payload.keyword;
       }),
   },
   initialState
@@ -145,8 +241,12 @@ export default handleActions(
 const actionCreators = {
   addArticle,
   addArticleDB,
-  setPost,
-  getPostDB,
-  getOnePostDB,
+  setArticle,
+  getArticleDB,
+  getOneArticleDB,
+  editArticleDB,
+  deleteArticleDB,
+  searchKeyword,
+  SearchDataDB,
 };
 export { actionCreators };

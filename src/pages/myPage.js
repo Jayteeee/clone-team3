@@ -4,38 +4,87 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { actionCreators as imageActions } from "../redux/modules/image";
+import axios from "axios";
+
 const MyPage = () => {
   const dispatch = useDispatch();
-  const userInfo = useSelector((state) => state.user.userInfo);
-  console.log(userInfo);
-  // const isLogin = userInfo.token ? true : false;
+
+  const userInfo = useSelector((state) => state.user?.userInfo);
+  const preview = useSelector((state) => state.image.preview);
   const fileInput = React.useRef();
-  const [image, setImage] = React.useState("");
-  const [nickName, setnickName] = React.useState("");
-  const [dongne, setDongne] = React.useState("");
-  const [gu, setGu] = React.useState("");
+
   React.useEffect(() => {
-    // dispatch(userActions.getUserDB()); //무한 반복 굴레;;
-  });
+    dispatch(userActions.getUserDB());
+  }, []);
+
+  React.useEffect(() => {
+    //Didupdate
+    setnickName(userInfo?.userNickname);
+    setDong(userInfo?.userDong);
+    setGu(userInfo?.userGu);
+  }, [userInfo]);
+
+  const [nickName, setnickName] = React.useState(
+    userInfo?.userNickname ? userInfo.userNickname : ""
+  );
+  const [dong, setDong] = React.useState(
+    userInfo?.userDong ? userInfo.userDong : ""
+  );
+  const [gu, setGu] = React.useState(userInfo?.userGu ? userInfo.userGu : "");
+
   const selectFile = (e) => {
-    const reader = new FileReader(); //사진이 인풋에 들어갔을 때 가져올 것이라서 selectFile안에 써준다.
-    const file = fileInput;
-    console.log(file);
-    reader.readAsDataURL(file); //어떤걸 넣고 싶은 지
+    const reader = new FileReader();
+    const file = fileInput.current.files[0];
+
+    reader.readAsDataURL(file);
     reader.onloadend = () => {
       dispatch(imageActions.setPreview(reader.result));
     };
   };
+
   const editUser = () => {
+    if (!fileInput.current || fileInput.current.files.length === 0) {
+      window.alert("이미지파일을 등록해주세요!");
+      return;
+    }
     const file = fileInput.current.files[0];
     console.log(file);
     const formData = new FormData();
-    formData.append("image", file);
-    formData.append("nickName", nickName);
-    // formData.append("dongne", Dongne);
+    formData.append("userImage", file);
+    formData.append("userNickname", nickName);
+    formData.append("userGu", gu);
+    formData.append("userDong", dong);
     console.log("formData", formData);
-    dispatch(imageActions.editUserDB(formData));
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+    dispatch(userActions.editUserDB(formData));
   };
+
+  const map = async () => {
+    //현재 내 위치 찾기(좌표)
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var lat = pos.coords.latitude;
+      var lon = pos.coords.longitude; //
+      axios
+        .get(
+          `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lon}&y=${lat}&input_coord=WGS84`,
+          {
+            headers: {
+              Authorization: "KakaoAK cf4972618521cabd5bce077b7103c8c1",
+            },
+          }
+        )
+        .then((res) => {
+          const location = res.data.documents[0].address;
+          console.log(location);
+          setGu(location.region_2depth_name);
+          setDong(location.region_3depth_name);
+          //=> useState('') setState로 값 지정해주자! //라이브러리같은 걸 이용할때는 리덕스사용하지 말자!!!!
+        });
+    });
+  };
+
   return (
     <React.Fragment>
       <MypageWrap>
@@ -47,10 +96,18 @@ const MyPage = () => {
           </div>
         </div>
         <div className="fileupload">
-          <Image alt="profile" src={"./img/profile.jpg"}></Image>
+          <Image
+            alt="profile"
+            src={preview ? preview : userInfo.userImage}
+          ></Image>
           <div className="fileupload">
             <label htmlFor="image">프로필 사진 변경</label>
-            <input type="file" id="image" onChange={selectFile} />
+            <input
+              type="file"
+              id="image"
+              ref={fileInput}
+              onChange={selectFile}
+            />
           </div>
         </div>
         <div className="edit">
@@ -58,13 +115,23 @@ const MyPage = () => {
             <label>닉네임</label>
             <input
               type="text"
-              // value={userInfo.userNickname  }
-              onChange={setnickName}
+              value={nickName || ""}
+              onChange={(e) => setnickName(e.target.value)}
             ></input>
             <label>나의 동네</label>
-            <input type="text"></input>
-            <Locationbtn>위치 변경하기</Locationbtn>
-            <Clearbtn>저장하기</Clearbtn>
+            <input
+              type="text"
+              value={`${gu} ${dong}` || ""}
+              onChange={(e) => setDong(e.target.value)}
+            ></input>
+            <Locationbtn
+              onClick={() => {
+                map();
+              }}
+            >
+              위치 변경하기
+            </Locationbtn>
+            <Clearbtn onClick={editUser}>저장하기</Clearbtn>
           </div>
         </div>
       </MypageWrap>
@@ -114,8 +181,6 @@ const MypageWrap = styled.div`
   }
   .edit {
     width: 600px;
-    /* background: green; */
-    /* margin-left: 50px; */
   }
   .edit input {
     width: 98%;

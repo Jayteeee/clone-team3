@@ -9,7 +9,7 @@ const getCookie = (name) => {
 // Cookie 생성
 const setCookie = (name, value, expires = 5) => {
   let date = new Date();
-  date.setTime(date.getTime() + expires * 24 * 60 * 1000);
+  date.setTime(date.getTime() + expires * 2 * 60 * 60 * 1000);
   document.cookie = `${name} = ${value}; expires = ${date.toUTCString()}`;
 };
 // Cookie 제거

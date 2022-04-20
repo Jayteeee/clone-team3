@@ -2,27 +2,34 @@ import { createAction, handleActions } from "redux-actions";
 import { produce } from "immer";
 import axios from "axios";
 import { setCookie, deleteCookie, getCookie } from "../../shared/Cookie";
+import jwt from "jwt-decode";
+
 // Action Types(액션 타입)
 const LOG_OUT = "LOG_OUT";
 const GET_USER = "GET_USER";
 const SET_USER = "SET_USER";
 const EDIT_USER = "EDIT_POST";
-const LOCATION = "LOCATION";
 const CHECK_DUP = "CHECK_DUP";
+
 // Action Creators(액션 생성 함수)
-const setUser = createAction(SET_USER, (token) => ({ token }));
+const setUser = createAction(SET_USER, (token, userInfo) => ({
+  token,
+  userInfo,
+}));
 const logOut = createAction(LOG_OUT, (user) => ({ user }));
 const getUser = createAction(GET_USER, (userInfo) => ({ userInfo }));
 const editUser = createAction(EDIT_USER, (formData) => ({ formData }));
-const loCation = createAction(LOCATION, (location) => ({ location }));
-const checkDup = createAction(CHECK_DUP, (id) => ({ id }));
+const checkDup = createAction(CHECK_DUP, (userId) => ({ userId }));
+
 // InitialState(defaultprops와 같은 역할)
 const initialState = {
   isLogin: false, // 처음에는 로그인이 안되어 있을 테니까 false.
   isCheck: false,
   id: null,
   location: "",
+  userInfo: "",
 };
+
 // Middleware Actions(미들웨어 액션)
 const loginDB = (id, password) => {
   return function (dispatch, { history }) {
@@ -30,7 +37,6 @@ const loginDB = (id, password) => {
     axios({
       method: "post",
       url: "http://3.35.27.190/main/login", //
-      // url: "https://6252ffae7f7fa1b1ddec36b3.mockapi.io/userInfo", //테스트 api id : eve.holt@reqres.in / pw : cityslicka
       data: {
         userId: id,
         userPassword: password,
@@ -39,11 +45,16 @@ const loginDB = (id, password) => {
       .then((res) => {
         console.log(res);
         const accessToken = res.data.token;
+
         // 쿠키에 토큰 저장
         setCookie("isLogin", `${accessToken}`);
         console.log(accessToken);
-        dispatch(setUser(accessToken));
-        // localStorage.setItem('is_login', doc.data.token);
+
+        const userInfo = jwt(accessToken); //토큰 복호화(id/nickname/gu/dong)
+        console.log(userInfo);
+
+        dispatch(setUser(accessToken, userInfo));
+        localStorage.setItem("isLogin", res.data.token);
         document.location.href = "/";
       })
       .catch((error) => {
@@ -51,34 +62,15 @@ const loginDB = (id, password) => {
       });
   };
 };
+
 const logoutDB = () => {
   return function (dispatch) {
     dispatch(logOut());
+    localStorage.removeItem("isLogin");
     document.location.href = "/";
   };
 };
-const locationDB = (lon, lat) => {
-  //
-  return function (dispatch, getState) {
-    axios
-      .get(
-        `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lat}&y=${lon}&input_coord=WGS84`,
-        {
-          headers: {
-            Authorization: "KakaoAK cf4972618521cabd5bce077b7103c8c1",
-          },
-        }
-      )
-      .then((res) => {
-        const location = res.data.documents[0];
-        // console.log(res);
-        // console.log(location.address.region_1depth_name);
-        // console.log(location.address.region_2depth_name);
-        // console.log(location.address.region_3depth_name);
-        dispatch(loCation(location)); //=> useState('') setState로 값 지정해주자! //라이브러리같은 걸 이용할때는 리덕스사용하지 말자!!!!
-      });
-  };
-};
+
 const signupDB = (nickName, id, pwd, pwdCheck, gu, dong) => {
   return function (dispatch) {
     axios({
@@ -105,76 +97,43 @@ const signupDB = (nickName, id, pwd, pwdCheck, gu, dong) => {
       });
   };
 };
+
 const editUserDB = (formData) => {
   return function (dispatch, getState) {
-    // const _post_idx = getState().post.list.findIndex(
-    //   (p) => p.post_id == post_id
-    // );
-    // console.log(_post_idx);
-    // const _post = getState().post.list[_post_idx];
-    // console.log(_post_idx);
-    // console.log(_post);
-    // let post = {
-    //   ..._post,
-    //   formData, //patch 안됌
-    // };
-    // console.log(post);
     axios({
       method: "post",
-      url: ``,
+      url: "http://3.35.27.190/user/mypage",
       data: formData,
       headers: {
         "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
-        Authorization: `Bearer ${getCookie("isLogin")}`,
+        Authorization: getCookie("isLogin"),
       },
     })
       .then((res) => {
+        //왜 then도.... catch도 안나오지...?
         console.log(res);
         dispatch(editUser(formData));
-        // document.location.href = "/";
+        document.location.href = "/";
       })
       .catch((error) => {
         console.log("에러났어", error);
       });
   };
 };
-// const idCheck = (id) => {
-//   return function (dispatch) {
-//     axios
-//       .post(
-//         "http://3.38.253.146/api/user/users/idCheck/",
-//         JSON.stringify({
-//           id: id,
-//           // password: 1234,
-//           // passwordCheck: 1234,
-//         }),
-//         { headers: { "Content-Type": `application/json` } }
-//       )
-//       .then((res) => {
-//         console.log(res);
-//         dispatch(checkDup(true));
-//         window.alert("사용 가능한 아이디입니다.");
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         dispatch(checkDup(false));
-//         window.alert("이미 존재하는 아이디입니다.");
-//       });
-//   };
-// };
+
 const getUserDB = () => {
-  //token를 받아오는 미들웨어
   return function (dispatch) {
     axios({
       method: "get",
-      url: `https://6252ffae7f7fa1b1ddec36b3.mockapi.io/userInfo`,
+      url: "http://3.35.27.190/user/mypage",
       headers: {
-        Authorization: `Bearer ${getCookie("isLogin")}`,
+        Authorization: getCookie("isLogin"),
       },
     })
       .then((res) => {
-        const userInfo = res.data[0];
-        // console.log(res.data[0]);
+        const userInfo = res.data.userInfo;
+        // console.log(userInfo);
+
         dispatch(getUser(userInfo));
       })
       .catch((error) => {
@@ -182,15 +141,47 @@ const getUserDB = () => {
       });
   };
 };
+const idCheckDB = (userId) => {
+  return function (dispatch) {
+    axios({
+      method: "get",
+      // url: "http://3.35.27.190/user/mypage",
+      headers: {
+        Authorization: getCookie("isLogin"),
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        dispatch(checkDup(true));
+        window.alert("사용 가능한 아이디입니다.");
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch(checkDup(false));
+        window.alert("이미 존재하는 아이디입니다.");
+      });
+  };
+};
+// const setUserDB = () => {
+//   //=> 변경요망 (DB를 거치지 않아서 바로 수정이 안됌 ㅜ)
+//   return function (dispatch, getState, { history }) {
+//     const User = getCookie("isLogin");
+//     const userInfo = jwt(getCookie("isLogin"));
+//     const tokenCheck = document.cookie;
+//     if (tokenCheck) {
+//       dispatch(setUser(User, userInfo));
+//     }
+//   };
+// };
+
 // Reducer
 export default handleActions(
   {
     [SET_USER]: (state, action) =>
       produce(state, (draft) => {
         draft.token = action.payload.token;
-        console.log(action.payload.token);
+        draft.userInfo = action.payload.userInfo;
         draft.isLogin = true;
-        // draft.isCheck = true;
         // creatAction을 사용할 때 액션 안에 type이 있고,
         // paylead가 있고, 이 안에 보낸 데이터가 담긴다.
       }),
@@ -202,27 +193,18 @@ export default handleActions(
       }),
     [GET_USER]: (state, action) =>
       produce(state, (draft) => {
-        draft.userInfo = action.payload.userInfo;
-        // console.log(action.payload);
         draft.isLogin = true;
+        draft.userInfo = action.payload.userInfo;
+        // console.log(action.payload.userInfo);
       }),
     [EDIT_USER]: (state, action) =>
       produce(state, (draft) => {
-        let idx = draft.list.findIndex((p) => p.id === action.payload.post_id); //인덱스 반환 => 딱 위치만 찾는 함수
-        console.log(action);
-        draft.list[idx] = { ...draft.list[idx], ...action.payload.post }; //갈아끼워줘라
+        draft.userInfo = { ...draft.userInfo, ...action.payload.userInfo }; //갈아끼워줘라
       }),
-    [LOCATION]: (state, action) =>
+    [CHECK_DUP]: (state, action) =>
       produce(state, (draft) => {
-        console.log(action.payload.location.address);
-        draft.location = action.payload.location.address;
-        // console.log(action.payload);
-        // draft.isLogin = true;
+        draft.isCheck = action.payload.id;
       }),
-    // [CHECK_DUP]: (state, action) =>
-    //   produce(state, (draft) => {
-    //     draft.is_check = action.payload.id;
-    //   }),
   },
   initialState
 );
@@ -234,9 +216,9 @@ const actionCreators = {
   loginDB,
   logoutDB,
   signupDB,
-  // idCheck,
+  idCheckDB,
   getUserDB,
   editUserDB,
-  locationDB,
+  // setUserDB,
 };
 export { actionCreators };
