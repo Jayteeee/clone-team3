@@ -60,10 +60,6 @@ const initialState = {
 //미들웨어 설정
 const addArticleDB = (formData) => {
   return function (dispatch, getState, { history }) {
-    let _article = {
-      ...initialState,
-      formData,
-    };
     axios({
       method: "post",
       url: "http://3.35.27.190/article/add",
@@ -75,7 +71,7 @@ const addArticleDB = (formData) => {
     })
       .then((res) => {
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
-        dispatch(addArticle(res.data.create));
+        dispatch(addArticle(res.data.createArticles));
         dispatch(imageActions.resetPreview());
         history.replace(`/detail/${res.data.createArticles.articleNumber}`);
       })
@@ -211,7 +207,7 @@ export default handleActions(
   {
     [ADD_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
-        draft.article.push(action.payload.article);
+        draft.list.push(action.payload.article);
       }),
     [SET_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
