@@ -6,20 +6,51 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as imageActions } from "../redux/modules/image";
 import { actionCreators as articleActions } from "../redux/modules/article";
 
-const ArticleWrite = () => {
+const ArticleWrite = (props) => {
   const dispatch = useDispatch();
+  const is_login = useSelector((state) => state.user.isLogin);
+  const { history } = props;
+  const articleNumber = props.match.params.articleNumber;
+  const is_edit = articleNumber ? true : false;
   const preview = useSelector((state) => state.image.preview);
-  console.log(useSelector((state) => state));
+  const article_list = useSelector((state) => state.article.list);
+  const _article = is_edit
+    ? article_list.find((p) => +p.articleNumber === +articleNumber)
+    : null;
 
   const fileInput = React.useRef(null);
-  console.log(fileInput);
   // const file = fileInput.current.files[0];
 
-  const [article, setArticle] = React.useState({
-    articleTitle: "제목",
-    articleContent: "내용",
-    articlePrice: "1000",
-  });
+  React.useEffect(() => {
+    if (is_edit) {
+      dispatch(articleActions.getOneArticleDB(articleNumber));
+    }
+  }, []);
+
+  React.useEffect(() => {
+    setTitle(_article?.articleTitle);
+    setPrice(_article?.articlePrice);
+    setContent(_article?.articleContent);
+  }, [article_list]);
+
+  const [title, setTitle] = React.useState(
+    is_edit ? _article?.articleTitle : ""
+  );
+  const changeTitle = (e) => {
+    setTitle(e.target.value);
+  };
+  const [price, setPrice] = React.useState(
+    is_edit ? _article?.articlePrice : ""
+  );
+  const changePrice = (e) => {
+    setPrice(e.target.value);
+  };
+  const [content, setContent] = React.useState(
+    is_edit ? _article?.articleContent : ""
+  );
+  const changeContent = (e) => {
+    setContent(e.target.value);
+  };
 
   const selectFile = (e) => {
     const reader = new FileReader();
@@ -31,32 +62,55 @@ const ArticleWrite = () => {
     };
   };
 
-  // computed property names 문법 (키값 동적 할당)
-  const handleForm = (e) => {
-    setArticle({
-      ...article,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const addArticleDB = () => {
     if (!fileInput.current || fileInput.current.files.length === 0) {
       window.alert("파일을 선택해주세요!");
       return;
     }
     const file = fileInput.current.files[0];
-    console.log(file);
     const formData = new FormData();
     formData.append("articleImageUrl", file);
-    formData.append("articleTitle", article.articleTitle);
-    formData.append("articleContent", article.articleContent);
-    formData.append("articlePrice", article.articlePrice);
-    console.log("formData", formData);
+    formData.append("articleTitle", title);
+    formData.append("articleContent", content);
+    formData.append("articlePrice", price);
     for (var pair of formData.entries()) {
       console.log(pair[0] + ", " + pair[1]);
     }
     return dispatch(articleActions.addArticleDB(formData));
   };
+
+  const editArticleDB = () => {
+    if (!fileInput.current || fileInput.current.files.length === 0) {
+      window.alert("파일을 선택해주세요!");
+      return;
+    }
+    const file = fileInput.current.files[0];
+    const formData = new FormData();
+    formData.append("articleImageUrl", file);
+    formData.append("articleTitle", title);
+    formData.append("articleContent", content);
+    formData.append("articlePrice", price);
+    for (var pair of formData.entries()) {
+      console.log(pair[0] + ", " + pair[1]);
+    }
+    return dispatch(articleActions.editArticleDB(articleNumber, formData));
+  };
+
+  if (!is_login) {
+    return (
+      <div>
+        <p>앗! 잠깐!</p>
+        <p>로그인 후에만 글을 쓸 수 있어요!</p>
+        <button
+          onClick={() => {
+            history.replace("/");
+          }}
+        >
+          로그인 하러가기
+        </button>
+      </div>
+    );
+  }
 
   return (
     //글쓰기&수정하기 컴포넌트 입니다. 사용하실 때 조건을 걸어서 제목만 수정하기로 변경해 주시면 될 것 같습니다.
@@ -66,7 +120,9 @@ const ArticleWrite = () => {
           <IoMdArrowBack />
         </div>
         <h2>중고거래 글쓰기</h2>
-        <p onClick={addArticleDB}>완료</p>
+        <Complete onClick={is_edit ? editArticleDB : addArticleDB}>
+          {is_edit ? "수정완료" : "완료"}
+        </Complete>
       </Title>
 
       <div className="imgBox">
@@ -77,9 +133,9 @@ const ArticleWrite = () => {
         <input type="file" id="image" ref={fileInput} onChange={selectFile} />
 
         <PreviewImage
-          alt={article.articleTitle}
+          alt={title}
           htmlFor="image"
-          src={preview ? preview : null}
+          src={preview ? preview : _article?.articleImageUrl}
         ></PreviewImage>
 
         <PreviewImage />
@@ -93,20 +149,23 @@ const ArticleWrite = () => {
           name="articleTitle"
           type="text"
           placeholder="제목"
-          onChange={handleForm}
+          value={title || ""}
+          onChange={changeTitle}
         />
         <input
           name="articlePrice"
-          type="text"
+          type="number"
           placeholder="￦ 가격(선택 사항)"
-          onChange={handleForm}
+          value={price || ""}
+          onChange={changePrice}
         />
       </Content>
 
       <Input
         name="articleContent"
         placeholder="내용을 입력해 주세요."
-        onChange={handleForm}
+        value={content || ""}
+        onChange={changeContent}
       />
     </Box>
   );
@@ -165,9 +224,6 @@ const Title = styled.div`
     font-weight: 600;
     margin-right: 260px;
   }
-  p {
-    color: gray;
-  }
 `;
 
 const Content = styled.div`
@@ -198,6 +254,10 @@ const PreviewImage = styled.img`
   border: 1px solid #eee;
   border-radius: 10px;
   margin-left: 0.5rem;
+`;
+
+const Complete = styled.p`
+  cursor: pointer;
 `;
 
 export default ArticleWrite;

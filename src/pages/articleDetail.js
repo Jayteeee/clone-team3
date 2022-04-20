@@ -14,6 +14,8 @@ const ArticleDetail = (props) => {
   const articleNumber = props.match.params.articleNumber;
   console.log(articleNumber);
   const article_list = useSelector((state) => state.article.list);
+  const profile = useSelector((state) => state);
+  console.log(profile);
   console.log(article_list);
   // const article_data = article_list[0]
   const article_idx = article_list.findIndex(
@@ -26,6 +28,16 @@ const ArticleDetail = (props) => {
   const [article, setArticle] = React.useState(
     article_data ? article_data : null
   );
+
+  const deleteArticle = () => {
+    const result = window.confirm("정말 삭제하시겠습니까?");
+    if (result === true) {
+      dispatch(articleActions.deleteArticleDB(articleNumber));
+    } else {
+      return;
+    }
+  };
+
   React.useEffect(() => {
     //   axios({
     //     method: "POST",
@@ -36,16 +48,26 @@ const ArticleDetail = (props) => {
     //   }).catch((err) => {
     //   console.log("새로고침하면 날아가버려~~~", err);
     // })
-    dispatch(articleActions.getOnePostDB(articleNumber));
+    dispatch(articleActions.getOneArticleDB(articleNumber));
   }, []);
   return (
     //이미지가 여러 장 들어갈지 한 장만 들어갈지 몰라서 둘다 넣어 놨습니다. SimpleSlider: 여러 장 / Image: 한 장
     <div>
       <Box>
+        <button
+          onClick={() => {
+            // e.stopPropagation();
+            history.push(`/edit/${articleNumber}`);
+          }}
+        >
+          수정
+        </button>
+
+        <button onClick={deleteArticle}>삭제</button>
         <SimpleSlider />
         {/* <Image />이미지 한 장일 경우 */}
         <User>
-          <Profile src={article_data.userImage} />
+          <Profile src={profile.userImageUrl} />
           <div className="userInfo">
             <h3>{article_data.userNickname}</h3>
             <p>{article_data.userGu + " " + article_data.userDong}</p>
