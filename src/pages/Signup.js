@@ -4,31 +4,40 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { useSelector } from "react-redux";
+import axios from "axios";
 const Signup = () => {
   const dispatch = useDispatch();
-  const _gu = useSelector((state) => state.user.location.region_2depth_name);
-  const _dong = useSelector((state) => state.user.location.region_3depth_name);
   const [nickName, setnickName] = React.useState("");
   const [id, setId] = React.useState("");
   const [pwd, setPwd] = React.useState("");
   const [pwdCheck, setPwdCheck] = React.useState("");
   const [dong, setDong] = React.useState("");
   const [gu, setGu] = React.useState("");
-  const Dong = () => {
-    setDong(_dong); //현재 주소(동)값을 setDong에 넣어줌
-  };
-  const Gu = () => {
-    setGu(_gu); //현재 주소(구)값을 setGu에 넣어줌
-  };
-  const map = () => {
+  const map = async () => {
     //현재 내 위치 찾기(좌표)
     navigator.geolocation.getCurrentPosition(function (pos) {
       // console.log(pos);
       var lat = pos.coords.latitude;
       var lon = pos.coords.longitude; //
-      dispatch(userActions.locationDB(lat, lon)); //현재 내 좌표를 주소로 나타내 줌
+      axios
+        .get(
+          `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lon}&y=${lat}&input_coord=WGS84`,
+          {
+            headers: {
+              Authorization: "KakaoAK cf4972618521cabd5bce077b7103c8c1",
+            },
+          }
+        )
+        .then((res) => {
+          const location = res.data.documents[0].address;
+          console.log(location);
+          setGu(location.region_2depth_name);
+          setDong(location.region_3depth_name);
+          //=> useState('') setState로 값 지정해주자! //라이브러리같은 걸 이용할때는 리덕스사용하지 말자!!!!
+        });
     });
   };
+
   const signup = () => {
     dispatch(userActions.signupDB(nickName, id, pwd, pwdCheck, gu, dong));
   };
@@ -79,7 +88,7 @@ const Signup = () => {
           ></input>
           <label>나의 동네</label>
           <input
-            value={gu + dong || "두 번 클릭해 주세요!"}
+            value={`${gu} ${dong}` || ""}
             placeholder="아래 버튼을 통해 동네를 설정해 주세요."
             onChange={(e) => {
               console.log("location");
@@ -89,8 +98,8 @@ const Signup = () => {
           ></input>
           <button
             onClick={() => {
-              Gu();
-              Dong();
+              // Gu();
+              // Dong();
               map();
             }}
           >
@@ -139,14 +148,6 @@ const SignupWrap = styled.div`
     border-radius: 7px;
     margin-bottom: 20px;
   }
-  /*
-  div button {
-    width: 100%;
-    border: 0;
-    height: 50px;
-    border-radius: 10px;
-    font-size: 15px;
-  } */
 `;
 const Signupbtn = styled.button`
   background-color: #ef8549;
