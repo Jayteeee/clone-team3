@@ -37,6 +37,7 @@ const Signup = () => {
         });
     });
   };
+
   const signup = () => {
     dispatch(userActions.signupDB(nickName, id, pwd, pwdCheck, gu, dong));
   };

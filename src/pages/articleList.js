@@ -30,6 +30,7 @@ const ArticleList = (props) => {
           </RegionMatching>
         </HeaderMessageContainer>
       </HeaderMessage>
+
       <Result>
         <ResultContainer>
           <ArticlesWrap>

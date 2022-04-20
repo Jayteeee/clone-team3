@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { actionCreators as articleActions } from "../redux/modules/article";
 import SearchList from "../pages/SearchList";
-
 // 모든 페이지에 나오는 헤더창
 const Header = () => {
   const dispatch = useDispatch();

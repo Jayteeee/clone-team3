@@ -1,5 +1,3 @@
-//검색 리스트
-
 import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
@@ -17,16 +15,13 @@ const SearchList = (props) => {
     setkeyword(e.target.value);
     // console.log("검색어 : " + e.target.value);
   };
-
   //입력값이 잘 들어가는지 확인
   const write = () => {
     console.log("검색어 : " + keyword);
     // dispatch(searchActions.SearchDataDB());
     dispatch(articleActions.SearchDataDB(keyword));
   };
-
   //dispatch(articleActions.SearchDataDB(keyword));
-
   return (
     <Section>
       <div>
@@ -35,7 +30,6 @@ const SearchList = (props) => {
           type="text"
           placeholder="물품명을 검색해보세요!"
           onChange={onChange}
-
           // value={search || ''}
         />
         <button onClick={write}>

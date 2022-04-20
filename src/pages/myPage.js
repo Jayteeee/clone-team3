@@ -5,14 +5,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { actionCreators as imageActions } from "../redux/modules/image";
 import axios from "axios";
+
 const MyPage = () => {
   const dispatch = useDispatch();
+
   const userInfo = useSelector((state) => state.user?.userInfo);
   const preview = useSelector((state) => state.image.preview);
   const fileInput = React.useRef();
+
   React.useEffect(() => {
     dispatch(userActions.getUserDB());
   }, []);
+
   React.useEffect(() => {
     //Didupdate
     setnickName(userInfo?.userNickname);
@@ -26,14 +30,17 @@ const MyPage = () => {
     userInfo?.userDong ? userInfo.userDong : ""
   );
   const [gu, setGu] = React.useState(userInfo?.userGu ? userInfo.userGu : "");
+
   const selectFile = (e) => {
     const reader = new FileReader();
     const file = fileInput.current.files[0];
+
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       dispatch(imageActions.setPreview(reader.result));
     };
   };
+
   const editUser = () => {
     if (!fileInput.current || fileInput.current.files.length === 0) {
       window.alert("이미지파일을 등록해주세요!");
@@ -75,6 +82,7 @@ const MyPage = () => {
         });
     });
   };
+
   return (
     <React.Fragment>
       <MypageWrap>

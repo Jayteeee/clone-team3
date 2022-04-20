@@ -140,7 +140,6 @@ const getUserDB = () => {
       });
   };
 };
-
 const idCheckDB = (userId) => {
   return function (dispatch) {
     axios({

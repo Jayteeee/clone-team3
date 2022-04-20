@@ -3,11 +3,14 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 // import { useSelector } from "react-redux";
 const Article = (props) => {
+  // console.log(props);
   const history = useHistory();
   return (
     <Container
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         history.push(`/detail/${props.articleNumber}`);
+        console.log(props);
       }}
     >
       <FleaMarketArticle>

@@ -19,8 +19,8 @@ const ArticleDetail = (props) => {
   //좋아요 prop값
   const articlelike = props;
   console.log(props);
-  const articleNum = articlelike.match.params.articleNumber; //게시물 번호
-  console.log(articleNum);
+  const articleNumber = articlelike.match.params.articleNumber; //게시물 번호
+  console.log(articleNumber);
 
   //좋아요
   const [like, setLike] = React.useState("");
@@ -38,21 +38,41 @@ const ArticleDetail = (props) => {
   // const articleNumber = props.match.params.articleNumber;
   // console.log(articleNumber);
   const article_list = useSelector((state) => state.article.list);
+  const profile = useSelector((state) => state);
+  console.log(profile);
   console.log(article_list);
   // const article_data = article_list[0]
   const article_idx = article_list.findIndex(
-    (p) => p.articleNumber == articleNum
+    (p) => p.articleNumber == articleNumber
   );
   //전체값의 순서랑 게시물 하나의 번호 비교
   console.log(article_idx);
   const article_data = article_list[article_idx];
+  //게시물이 있니? 있으면 넣고 없으면 null 넣어줘
+  const [article, setArticle] = React.useState(
+    article_data ? article_data : null
+  );
 
   const deleteArticle = () => {
-    dispatch(articleActions.deleteArticleDB(articleNum));
+    const result = window.confirm("정말 삭제하시겠습니까?");
+    if (result === true) {
+      dispatch(articleActions.deleteArticleDB(articleNumber));
+    } else {
+      return;
+    }
   };
 
   React.useEffect(() => {
-    dispatch(articleActions.getOneArticleDB(articleNum));
+    //   axios({
+    //     method: "POST",
+    //     // url: ``, //서버 주소
+    //     url:`https://6253d1d889f28cf72b5335ef.mockapi.io/datail` //가상 데이터 저장소
+    //   }).then((response) => {
+    //     console.log(response.data);
+    //   }).catch((err) => {
+    //   console.log("새로고침하면 날아가버려~~~", err);
+    // })
+    dispatch(articleActions.getOneArticleDB(articleNumber));
   }, []);
 
   //새로고침
@@ -65,7 +85,7 @@ const ArticleDetail = (props) => {
         <button
           onClick={() => {
             // e.stopPropagation();
-            history.push(`/edit/${articleNum}`);
+            history.push(`/edit/${articleNumber}`);
           }}
         >
           수정
@@ -74,7 +94,7 @@ const ArticleDetail = (props) => {
         <SimpleSlider />
         {/* <Image />이미지 한 장일 경우 */}
         <User>
-          <Profile src={article_data.userImage} />
+          <Profile src={profile.userImageUrl} />
           <div className="userInfo">
             <h3>{article_data.userNickname}</h3>
             <p>{article_data.userGu + " " + article_data.userDong}</p>

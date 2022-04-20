@@ -10,7 +10,6 @@ const SET_ARTICLE = "SET_ARTICLE";
 const SET_ONE_ARTICLE = "SET_ONE_ARTICLE";
 const EDIT_ARTICLE = "EDIT_ARTICLE";
 const DELETE_ARTICLE = "DELETE_ARTICLE";
-
 const SEARCH_KEYWORD = "SEARCH_KEYWORD";
 //액션 크리에이터
 const addArticle = createAction(ADD_ARTICLE, (article) => ({ article }));
@@ -30,7 +29,6 @@ const deleteArticle = createAction(DELETE_ARTICLE, (articleNumber) => ({
 const searchKeyword = createAction(SEARCH_KEYWORD, (keyword) => ({
   keyword,
 }));
-
 //초기값 설정
 const initialState = {
   list: [
@@ -77,9 +75,9 @@ const addArticleDB = (formData) => {
     })
       .then((res) => {
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
-        dispatch(addArticle(_article));
+        dispatch(addArticle(res.data.create));
         dispatch(imageActions.resetPreview());
-        history.replace("/list"); //본인이 작성한 게시물 상세페이지로 이동해야함
+        history.replace(`/detail/${res.data.createArticles.articleNumber}`);
       })
       .catch((err) => {
         // 요청이 정상적으로 끝나지 않았을 때(오류 났을 때) 수행할 작업!
@@ -159,7 +157,6 @@ const getOneArticleDB = (articleNumber) => {
       });
   };
 };
-
 //상세페이지 수정하기
 const editArticleDB = (articleNumber = null, formData = {}) => {
   return function (dispatch, getState, { history }) {
@@ -180,7 +177,7 @@ const editArticleDB = (articleNumber = null, formData = {}) => {
       .then((res) => {
         console.log(res);
         dispatch(editArticle(articleNumber, { article: res.article }));
-        history.replace("/");
+        history.replace(`/detail/${articleNumber}`);
       })
       .catch((err) => {
         window.alert("앗! 게시글 업데이트에 문제가 있어요!");
@@ -188,7 +185,6 @@ const editArticleDB = (articleNumber = null, formData = {}) => {
       });
   };
 };
-
 const deleteArticleDB = (articleNumber) => {
   return function (dispatch, getState, { history }) {
     axios({
@@ -201,7 +197,7 @@ const deleteArticleDB = (articleNumber) => {
     })
       .then(() => {
         window.alert("삭제 되었습니다!");
-        console.log("삭제 되었습니다!");
+        history.replace("/list");
       })
       .catch((error) => {
         window.alert("삭제 도중 문제가 생겼습니다!");
@@ -210,7 +206,6 @@ const deleteArticleDB = (articleNumber) => {
     dispatch(deleteArticle([articleNumber]));
   };
 };
-
 //리듀서
 export default handleActions(
   {
