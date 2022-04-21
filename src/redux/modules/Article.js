@@ -26,8 +26,8 @@ const editArticle = createAction(EDIT_ARTICLE, (articleNumber, article) => ({
 const deleteArticle = createAction(DELETE_ARTICLE, (articleNumber) => ({
   articleNumber,
 }));
-const searchKeyword = createAction(SEARCH_KEYWORD, (keyword) => ({
-  keyword,
+const searchKeyword = createAction(SEARCH_KEYWORD, (article_list) => ({
+  article_list,
 }));
 //초기값 설정
 const initialState = {
@@ -59,8 +59,8 @@ const initialState = {
 
 //미들웨어 설정
 const addArticleDB = (formData) => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "post",
       url: "http://3.35.27.190/article/add",
       data: formData,
@@ -99,16 +99,15 @@ const getArticleDB = () => {
         dispatch(setArticle(_post)); //setPost에 _post 담아서 리듀서로 던지자
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.toJSON());
       });
   };
 };
 
 //검색창 입력값 보내기
 const SearchDataDB = (keyword) => {
-  return function (dispatch, getState, { history }) {
-    // const queryClient = new QueryClient();
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "get",
       url: `http://3.35.27.190/article/list/${keyword}`,
       headers: {
@@ -117,20 +116,25 @@ const SearchDataDB = (keyword) => {
     })
       .then((response) => {
         // console.log(response);
-        dispatch(searchKeyword(response.data.list));
-        console.log(response);
-        history.push(`/list/${keyword}`);
+        if (response.data.list == null) {
+          window.alert("검색 결과가 없습니다.");
+        } else {
+          dispatch(searchKeyword(response.data.list));
+          console.log(response);
+          history.push(`/list/${keyword}`);
+        }
       })
       .catch((err) => {
         console.log("검색 결과를 표시 할 수 없습니다.", err);
+        window.alert("검색 결과를 표시 할 수 없습니다.");
       });
   };
 };
 
 //상세페이지로 데이터 하나씩 불러오기
 const getOneArticleDB = (articleNumber) => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "get",
       // url: ``, //서버 주소
       url: `http://3.35.27.190/article/detail/${articleNumber}`, //가상 데이터 저장소
@@ -155,12 +159,12 @@ const getOneArticleDB = (articleNumber) => {
 };
 //상세페이지 수정하기
 const editArticleDB = (articleNumber = null, formData = {}) => {
-  return function (dispatch, getState, { history }) {
+  return async function (dispatch, getState, { history }) {
     if (!articleNumber) {
       window.alert("게시물 정보가 없어요!");
       return;
     }
-    axios({
+    await axios({
       method: "post",
       url: `http://3.35.27.190/article/edit/${articleNumber}`,
       // url: `https://625cf0b495cd5855d618229e.mockapi.io/article/1`,
@@ -182,8 +186,8 @@ const editArticleDB = (articleNumber = null, formData = {}) => {
   };
 };
 const deleteArticleDB = (articleNumber) => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "delete",
       url: `http://3.35.27.190/article/delete/${articleNumber}`,
       headers: {
@@ -233,7 +237,7 @@ export default handleActions(
     //검색창
     [SEARCH_KEYWORD]: (state, action) =>
       produce(state, (draft) => {
-        draft.list = action.payload.keyword;
+        draft.list = action.payload.article_list;
       }),
   },
   initialState

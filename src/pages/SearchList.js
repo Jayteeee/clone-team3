@@ -64,6 +64,9 @@ const Section = styled.section`
       background-color: transparent;
       border-radius: 3px;
       font-family: inherit;
+      &:focus-visible {
+        outline: none;
+      }
     }
     & > button {
       border: none;

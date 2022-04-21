@@ -16,19 +16,21 @@ const Login = () => {
   return (
     <React.Fragment>
       <LoginWrap>
-        <div>
-          <img alt="carrot" src="./img/carrot.png"></img>
-        </div>
-        <h3>로그인을 해주세요.</h3>
-        <div className="icon">
-          <IoIosArrowRoundBack
-            size="40px"
-            color="#6B5244"
-            onClick={() => {
-              history.replace("/");
-            }}
-          />
-        </div>
+        <Head>
+          <div>
+            <img alt="carrot" src="./img/carrot.png"></img>
+            <h3>로그인을 해주세요.</h3>
+          </div>
+          <div className="icon">
+            <IoIosArrowRoundBack
+              size="40px"
+              color="#6B5244"
+              onClick={() => {
+                history.replace("/");
+              }}
+            />
+          </div>
+        </Head>
         <div>
           <label>아이디</label>
           <input
@@ -55,19 +57,20 @@ const Login = () => {
   );
 };
 const LoginWrap = styled.div`
-  width: 30vw;
+  width: 30%;
   height: auto;
   display: flex;
   flex-direction: column;
-  border: 2px solid #ef8549;
+  border: none;
+  box-shadow: 0px 0px 10px 0px #ef8549;
   border-radius: 10px;
   margin: 4% auto;
-  padding: 50px;
+  padding: 3rem;
   position: relative;
   .icon {
-    position: absolute;
+    /* position: absolute;
     top: 60px;
-    right: 40px;
+    right: 40px; */
     cursor: pointer;
   }
   h3 {
@@ -88,7 +91,7 @@ const LoginWrap = styled.div`
     color: #6b5244;
   }
   div input {
-    width: 24vw;
+    width: 100%;
     height: 30px;
     padding: 20px;
     margin: auto;
@@ -105,5 +108,12 @@ const LoginWrap = styled.div`
     color: #fff;
     font-size: 15px;
   }
+`;
+
+const Head = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 `;
 export default Login;

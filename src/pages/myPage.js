@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { actionCreators as imageActions } from "../redux/modules/image";
 import axios from "axios";
+import { history } from "../redux/configStore";
 
 const MyPage = () => {
   const dispatch = useDispatch();
@@ -90,7 +91,13 @@ const MyPage = () => {
           <img alt="carrot" src="./img/carrot.png"></img>
           <h2>마이페이지</h2>
           <div className="icon">
-            <IoIosArrowRoundBack size="40px" color="#6B5244" />
+            <IoIosArrowRoundBack
+              size="40px"
+              color="#6B5244"
+              onClick={() => {
+                history.goBack();
+              }}
+            />
           </div>
         </div>
         <div className="fileupload">
@@ -138,8 +145,9 @@ const MyPage = () => {
 };
 const MypageWrap = styled.div`
   max-width: 600px;
-  height: 500px;
-  border: 2px solid #ef8549;
+  height: 530px;
+  border: none;
+  box-shadow: 0px 0px 10px 0px #ef8549;
   border-radius: 10px;
   padding: 50px;
   margin: 100px auto; //header 삽입후 높이값 수정예정
@@ -233,8 +241,8 @@ const Clearbtn = styled.button`
   height: 50px;
   border-radius: 10px;
   font-size: 15px;
+  margin-top: 1.8rem;
   cursor: pointer;
-  margin-top: 50px;
 `;
 const Image = styled.img`
   width: 200px;

@@ -105,7 +105,7 @@ const editUserDB = (formData) => {
       url: "http://3.35.27.190/user/mypage",
       data: formData,
       headers: {
-        "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+        "Content-Type": `multipart/form-data;`,
         Authorization: getCookie("isLogin"),
       },
     })

@@ -10,40 +10,40 @@ const Footer = () => {
           <FooterLogo></FooterLogo>
           <FooterList>
             <li>
-              <a href="/">믿을 수 있는 중고거래</a>
+              <p>믿을 수 있는 중고거래</p>
             </li>
             <li>
-              <a href="/">자주 묻는 질문</a>
-            </li>
-          </FooterList>
-          <FooterList>
-            <li>
-              <a href="/">광고주센터</a>
-            </li>
-            <li>
-              <a href="/">당근페이</a>
-            </li>
-            <li>
-              <a href="/">동네가게</a>
+              <p>자주 묻는 질문</p>
             </li>
           </FooterList>
           <FooterList>
             <li>
-              <a href="/">회사 소개</a>
+              <p>광고주센터</p>
             </li>
             <li>
-              <a href="/">채용</a>
+              <p>당근페이</p>
+            </li>
+            <li>
+              <p>동네가게</p>
             </li>
           </FooterList>
           <FooterList>
             <li>
-              <a href="/">이용약관</a>
+              <p>회사 소개</p>
             </li>
             <li>
-              <a href="/">개인정보처리방침</a>
+              <p>채용</p>
+            </li>
+          </FooterList>
+          <FooterList>
+            <li>
+              <p>이용약관</p>
             </li>
             <li>
-              <a href="/">위치기반서비스 이용약관</a>
+              <p>개인정보처리방침</p>
+            </li>
+            <li>
+              <p>위치기반서비스 이용약관</p>
             </li>
           </FooterList>
         </FooterTop>
@@ -51,18 +51,18 @@ const Footer = () => {
           <Copyright>
             <CopyrightList>
               <li>
-                고객문의 <a href="/">info@aaa.com</a>
+                고객문의 <span>info@aaa.com</span>
               </li>
               <li>
-                제휴문의 <a href="/">info@aaa.com</a>
+                제휴문의 <span>info@aaa.com</span>
               </li>
             </CopyrightList>
             <CopyrightList>
               <li>
-                지역광고 <a href="/">info@aaa.com</a>
+                지역광고 <span>info@aaa.com</span>
               </li>
               <li>
-                PR문의 <a href="/">info@aaa.com</a>
+                PR문의 <span>info@aaa.com</span>
               </li>
             </CopyrightList>
             <CopyrightList>
@@ -124,7 +124,7 @@ const FooterList = styled.ul`
     font-weight: 700;
     text-decoration: none;
     margin: 10px;
-    & > a {
+    & > p {
       text-decoration: none;
       color: #868e96;
       font-weight: 400;
@@ -155,7 +155,7 @@ const CopyrightList = styled.ul`
     font-size: 0.8rem;
     font-weight: 400;
     margin: 0 0.6rem 0 0;
-    & > a {
+    & > span {
       text-decoration: none;
       color: #868e96;
       font-weight: 400;
