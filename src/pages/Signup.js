@@ -113,7 +113,8 @@ const Signup = () => {
 };
 const SignupWrap = styled.div`
   max-width: 500px;
-  border: 2px solid #ef8549;
+  border: none;
+  box-shadow: 0px 0px 10px 0px #ef8549;
   border-radius: 10px;
   margin: 2% auto;
   padding: 50px;

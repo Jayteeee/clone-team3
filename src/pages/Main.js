@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 
 // 메인페이지
@@ -46,8 +46,20 @@ const Main = () => {
             </HomeMainTitle>
             <TextM>동네 주민들과 가깝고 따뜻한 거래를 지금 경험해보세요.</TextM>
             <HomeButtons>
-              <HomeButton>인기매물 보기</HomeButton>
-              <HomeButton>믿을 수 있는 중고거래</HomeButton>
+              <HomeButton
+                onClick={() => {
+                  window.alert("COMING SOON! 기능 준비중입니다 :)");
+                }}
+              >
+                인기매물 보기
+              </HomeButton>
+              <HomeButton
+                onClick={() => {
+                  window.alert("COMING SOON! 기능 준비중입니다 :)");
+                }}
+              >
+                믿을 수 있는 중고거래
+              </HomeButton>
             </HomeButtons>
           </div>
         </HomeMainContent>
@@ -109,7 +121,13 @@ const Main = () => {
               동네 주민이 남긴 진짜 후기를 함께 확인해보세요!
             </TextM>
             <HomeButtons>
-              <HomeButton>당근마켓 동네가게 찾기</HomeButton>
+              <HomeButton
+                onClick={() => {
+                  window.alert("COMING SOON! 기능 준비중입니다 :)");
+                }}
+              >
+                당근마켓 동네가게 찾기
+              </HomeButton>
             </HomeButtons>
           </div>
         </HomeMainContent>

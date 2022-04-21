@@ -4,6 +4,8 @@ import { actionCreators as imageActions } from "./image";
 import instance from "../../shared/Api";
 import axios from "axios";
 import { getCookie } from "../../shared/Cookie";
+import { CALL_HISTORY_METHOD } from "connected-react-router";
+
 //액션 설정
 const ADD_ARTICLE = "ADD_ARTICLE";
 const SET_ARTICLE = "SET_ARTICLE";
@@ -26,8 +28,8 @@ const editArticle = createAction(EDIT_ARTICLE, (articleNumber, article) => ({
 const deleteArticle = createAction(DELETE_ARTICLE, (articleNumber) => ({
   articleNumber,
 }));
-const searchKeyword = createAction(SEARCH_KEYWORD, (keyword) => ({
-  keyword,
+const searchKeyword = createAction(SEARCH_KEYWORD, (article_list) => ({
+  article_list,
 }));
 //초기값 설정
 const initialState = {
@@ -43,26 +45,23 @@ const initialState = {
       articleContent:
         "밭안에 간식 넣고 노즈워크 후 당근 뽑고 노는 제품이에요! 노즐이 짧은 아이들은 밑에 종이 뭉쳐넣거나 폼 같은 거 잘라서 넣으면 됩니다!",
       //게시글 내용
-      articleCreatedAt: "7시간 전", //게시글 시간
+      articleCreatedAt: "", //게시글 시간
       articleImageUrl: "testUrl", //게시글 이미지
       articlePrice: "10,000", //물건 가격
-      // articleLike: [{
-      //       articleNumber: 1,
-      //       userId: "mandu"},
-      //       {articleNumber: 1,
-      //       userId: "duman"}],
+      articleLike: [
+        {
+          articleNumber: 1,
+          userId: "mandu",
+        },
+      ],
     },
   ],
 };
 
 //미들웨어 설정
 const addArticleDB = (formData) => {
-  return function (dispatch, getState, { history }) {
-    let _article = {
-      ...initialState,
-      formData,
-    };
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "post",
       url: "http://3.35.27.190/article/add",
       data: formData,
@@ -72,6 +71,8 @@ const addArticleDB = (formData) => {
       },
     })
       .then((res) => {
+        console.log(res);
+        console.log(res.data);
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
         dispatch(addArticle(res.data.createArticles));
         dispatch(imageActions.resetPreview());
@@ -86,8 +87,8 @@ const addArticleDB = (formData) => {
 
 //게시글 전체 목록 불러오기
 const getArticleDB = () => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "get",
       // url: ``, //서버 주소
       // url: `https://6253d1d889f28cf72b5335ef.mockapi.io/list`, //가상 데이터 저장소
@@ -97,20 +98,20 @@ const getArticleDB = () => {
       },
     })
       .then((doc) => {
+        console.log(doc.data);
         const _post = doc.data.List;
         dispatch(setArticle(_post)); //setPost에 _post 담아서 리듀서로 던지자
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err.toJSON());
       });
   };
 };
 
 //검색창 입력값 보내기
 const SearchDataDB = (keyword) => {
-  return function (dispatch, getState, { history }) {
-    // const queryClient = new QueryClient();
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "get",
       url: `http://3.35.27.190/article/list/${keyword}`,
       headers: {
@@ -136,11 +137,11 @@ const SearchDataDB = (keyword) => {
 
 //상세페이지로 데이터 하나씩 불러오기
 const getOneArticleDB = (articleNumber) => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "get",
       // url: ``, //서버 주소
-      url: `http://3.35.27.190/article/detail/${articleNumber}`, //가상 데이터 저장소
+      url: `http://3.35.27.190/article/detail/${articleNumber}`,
       headers: {
         Authorization: `${getCookie("isLogin")}`,
       },
@@ -162,12 +163,12 @@ const getOneArticleDB = (articleNumber) => {
 };
 //상세페이지 수정하기
 const editArticleDB = (articleNumber = null, formData = {}) => {
-  return function (dispatch, getState, { history }) {
+  return async function (dispatch, getState, { history }) {
     if (!articleNumber) {
       window.alert("게시물 정보가 없어요!");
       return;
     }
-    axios({
+    await axios({
       method: "post",
       url: `http://3.35.27.190/article/edit/${articleNumber}`,
       // url: `https://625cf0b495cd5855d618229e.mockapi.io/article/1`,
@@ -189,8 +190,8 @@ const editArticleDB = (articleNumber = null, formData = {}) => {
   };
 };
 const deleteArticleDB = (articleNumber) => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "delete",
       url: `http://3.35.27.190/article/delete/${articleNumber}`,
       headers: {
@@ -241,7 +242,7 @@ export default handleActions(
     //검색창
     [SEARCH_KEYWORD]: (state, action) =>
       produce(state, (draft) => {
-        draft.list = action.payload.keyword;
+        draft.list = action.payload.article_list;
       }),
   },
   initialState
