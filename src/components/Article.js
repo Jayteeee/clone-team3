@@ -10,13 +10,13 @@ const Article = (props) => {
       onClick={(e) => {
         e.stopPropagation();
         history.push(`/detail/${props.articleNumber}`);
-        console.log(props);
+        // console.log(props);
       }}
     >
       <FleaMarketArticle>
         <FleaMarketArticleLink>
           <CardPhoto>
-            <img alt="사진이 왜 안나오지" src={props.articleImageUrl} />
+            <img alt="사진이 왜 안나오지" src={props.articleImageUrl_1} />
           </CardPhoto>
           <ArticleInfo>
             <ArticleTitleContent>

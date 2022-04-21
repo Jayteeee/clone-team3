@@ -18,11 +18,18 @@ const Header = () => {
     } else {
       setIsLogin(false);
     }
-    // dispatch(userActions.getUserDB());
+    dispatch(articleActions.getArticleDB());
   }, []);
+
   const logout = () => {
     dispatch(userActions.logoutDB());
   };
+
+  const totalList = () => {
+    dispatch(articleActions.getArticleDB());
+    history.push("/list");
+  };
+
   if (isLogin) {
     return (
       <Container>
@@ -35,6 +42,9 @@ const Header = () => {
           </Link>
           <SearchList />
           <FixedBarMenu>
+            <Buttons>
+              <ButtonText onClick={totalList}>동네 둘러보기</ButtonText>
+            </Buttons>
             <Buttons>
               <ButtonText onClick={logout}>로그아웃</ButtonText>
             </Buttons>

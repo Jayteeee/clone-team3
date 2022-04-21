@@ -2,6 +2,7 @@
 import { handleActions, createAction } from "redux-actions";
 import produce from "immer";
 import axios from "axios";
+import { getCookie } from "../../shared/Cookie";
 
 //액션
 const ADD_LIKE = "ADD_LIKE";
@@ -33,6 +34,19 @@ const addLikeDB = (articleNumber = null, articleLike, like_list) => {
   return function (dispatch, getState, { history }) {
     const user_id = getState().user; //사용자 id
     console.log(user_id);
+    axios({
+      method: "post",
+      url: "http://3.35.27.190/article/like",
+      headers: {
+        Authorization: `${getCookie("isLogin")}`,
+      },
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log("좋아요 버튼이 실행되지 않았습니다.", error);
+      });
   };
 };
 

@@ -18,10 +18,9 @@ const SearchList = (props) => {
   //입력값이 잘 들어가는지 확인
   const write = () => {
     console.log("검색어 : " + keyword);
-    // dispatch(searchActions.SearchDataDB());
     dispatch(articleActions.SearchDataDB(keyword));
   };
-  //dispatch(articleActions.SearchDataDB(keyword));
+
   return (
     <Section>
       <div>
