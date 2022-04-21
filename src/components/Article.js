@@ -47,9 +47,8 @@ const Article = (props) => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 239px;
-  min-height: 150px;
-  justify-content: left;
+  max-width: 200px;
+  height: auto;
 `;
 const FleaMarketArticle = styled.article`
   position: relative;
@@ -69,7 +68,7 @@ const CardPhoto = styled.div`
   background-color: #f8f9fa;
   border-radius: 8px;
   & > img {
-    width: 100%;
+    width: 180px;
     height: 100%;
     display: block;
     transform: translate(0, -13%);

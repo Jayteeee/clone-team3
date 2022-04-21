@@ -94,7 +94,8 @@ const Wrap = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: left;
+  padding: 0% 0% 0% 10%;
 `;
 const ArticleKind = styled.p`
   font-weight: 600;
