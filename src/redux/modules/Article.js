@@ -4,6 +4,8 @@ import { actionCreators as imageActions } from "./image";
 import instance from "../../shared/Api";
 import axios from "axios";
 import { getCookie } from "../../shared/Cookie";
+import { CALL_HISTORY_METHOD } from "connected-react-router";
+
 //액션 설정
 const ADD_ARTICLE = "ADD_ARTICLE";
 const SET_ARTICLE = "SET_ARTICLE";
@@ -43,14 +45,15 @@ const initialState = {
       articleContent:
         "밭안에 간식 넣고 노즈워크 후 당근 뽑고 노는 제품이에요! 노즐이 짧은 아이들은 밑에 종이 뭉쳐넣거나 폼 같은 거 잘라서 넣으면 됩니다!",
       //게시글 내용
-      articleCreatedAt: "7시간 전", //게시글 시간
+      articleCreatedAt: "", //게시글 시간
       articleImageUrl: "testUrl", //게시글 이미지
       articlePrice: "10,000", //물건 가격
-      // articleLike: [{
-      //       articleNumber: 1,
-      //       userId: "mandu"},
-      //       {articleNumber: 1,
-      //       userId: "duman"}],
+      articleLike: [
+        {
+          articleNumber: 1,
+          userId: "mandu",
+        },
+      ],
     },
   ],
   article: [],
@@ -70,6 +73,8 @@ const addArticleDB = (formData) => {
       },
     })
       .then((res) => {
+        console.log(res);
+        console.log(res.data);
         //요청이 정상적으로 끝나고 응답을 받아왔다면 수행할 작업!
         dispatch(addArticle(res.data.createArticles));
         dispatch(imageActions.resetPreview());
@@ -84,8 +89,8 @@ const addArticleDB = (formData) => {
 
 //게시글 전체 목록 불러오기
 const getArticleDB = () => {
-  return function (dispatch, getState, { history }) {
-    axios({
+  return async function (dispatch, getState, { history }) {
+    await axios({
       method: "get",
       // url: ``, //서버 주소
       // url: `https://6253d1d889f28cf72b5335ef.mockapi.io/list`, //가상 데이터 저장소
@@ -95,6 +100,7 @@ const getArticleDB = () => {
       },
     })
       .then((doc) => {
+        console.log(doc.data);
         const _post = doc.data.List;
         dispatch(setArticle(_post)); //setPost에 _post 담아서 리듀서로 던지자
       })
@@ -137,7 +143,7 @@ const getOneArticleDB = (articleNumber) => {
     await axios({
       method: "get",
       // url: ``, //서버 주소
-      url: `http://3.35.27.190/article/detail/${articleNumber}`, //가상 데이터 저장소
+      url: `http://3.35.27.190/article/detail/${articleNumber}`,
       headers: {
         Authorization: `${getCookie("isLogin")}`,
       },
@@ -220,6 +226,7 @@ export default handleActions(
     [SET_ONE_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
         draft.list = action.payload.article.List.list;
+        draft.list.userImage = action.payload.article.List.userImage;
       }),
     [EDIT_ARTICLE]: (state, action) =>
       produce(state, (draft) => {
