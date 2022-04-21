@@ -16,7 +16,6 @@ import { actionCreators as likeActions } from "../redux/modules/like";
 const ArticleDetail = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
-
   const total = useSelector((state) => state.like.list);
   console.log(total);
   const state = useSelector((state) => state);
@@ -55,8 +54,7 @@ const ArticleDetail = (props) => {
   // console.log(articleNumber);
 
   const article_list = useSelector((state) => state.article.list);
-  console.log(article_list);
-  // const article_data = article_list[0]
+
   const article_idx = article_list.findIndex(
     (p) => p.articleNumber == articleNumber
   );
@@ -96,6 +94,7 @@ const ArticleDetail = (props) => {
           <Vuttons>
             <Vutton
               onClick={() => {
+                // e.stopPropagation();
                 history.push(`/edit/${articleNumber}`);
               }}
             >
