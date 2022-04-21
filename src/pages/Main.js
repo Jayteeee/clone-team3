@@ -148,7 +148,7 @@ const HomeMainTitle = styled.h1`
 `;
 
 const TextM = styled.p`
-  font-size: 1.6rem;
+  font-size: 1rem;
   line-height: 1.5;
   letter-spacing: -0.3px;
 `;

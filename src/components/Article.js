@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 // import { useSelector } from "react-redux";
 const Article = (props) => {
-  // console.log(props);
+  console.log(props);
   const history = useHistory();
   return (
     <Container
@@ -16,7 +16,7 @@ const Article = (props) => {
       <FleaMarketArticle>
         <FleaMarketArticleLink>
           <CardPhoto>
-            <img alt="사진이 왜 안나오지" src={props.articleImageUrl} />
+            <img alt="사진이 왜 안나오지" src={props.articleImageUrl_1} />
           </CardPhoto>
           <ArticleInfo>
             <ArticleTitleContent>
@@ -26,7 +26,7 @@ const Article = (props) => {
             <ArticleRegionName>
               {props.userGu + " " + props.userDong}
             </ArticleRegionName>
-            <ArticlePrice>{props.articlePrice}원</ArticlePrice>
+            <ArticlePrice>{props.articlePrice.toLocaleString()}원</ArticlePrice>
             <ArticleSubInfo>
               <ArticleWatch>
                 <img
@@ -34,7 +34,7 @@ const Article = (props) => {
                   alt="Watch count"
                   src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/like-8111aa74d4b1045d7d5943a901896992574dd94c090cef92c26ae53e8da58260.svg"
                 />{" "}
-                {props.articleLike}
+                {props.likeCount}
               </ArticleWatch>
             </ArticleSubInfo>
           </ArticleInfo>

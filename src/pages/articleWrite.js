@@ -11,57 +11,73 @@ const ArticleWrite = (props) => {
   const { history } = props;
   const articleNumber = props.match.params.articleNumber;
   const is_edit = articleNumber ? true : false;
-  const preview = useSelector((state) => state.image.preview);
   const article_list = useSelector((state) => state.article.list);
+  console.log(article_list);
   const _article = is_edit
     ? article_list.find((p) => +p.articleNumber === +articleNumber)
     : null;
   const fileInput = React.useRef(null);
-  // const file = fileInput.current.files[0];
+  console.log(fileInput);
   React.useEffect(() => {
     if (is_edit) {
       dispatch(articleActions.getOneArticleDB(articleNumber));
     }
-  }, []);
-  React.useEffect(() => {
     setTitle(_article?.articleTitle);
     setPrice(_article?.articlePrice);
     setContent(_article?.articleContent);
-  }, [article_list]);
+  }, []);
+
+  const [images, setImages] = React.useState([]);
+  const [previewImg, setPreviewImg] = React.useState([]);
+
   const [title, setTitle] = React.useState(
     is_edit ? _article?.articleTitle : ""
   );
-  const changeTitle = (e) => {
-    setTitle(e.target.value);
-  };
   const [price, setPrice] = React.useState(
     is_edit ? _article?.articlePrice : ""
   );
-  const changePrice = (e) => {
-    setPrice(e.target.value);
-  };
   const [content, setContent] = React.useState(
     is_edit ? _article?.articleContent : ""
   );
+
+  const changeTitle = (e) => {
+    setTitle(e.target.value);
+  };
+  const changePrice = (e) => {
+    setPrice(e.target.value);
+  };
   const changeContent = (e) => {
     setContent(e.target.value);
   };
   const selectFile = (e) => {
     const reader = new FileReader();
-    const file = fileInput.current.files[0];
-    reader.readAsDataURL(file);
+    const file = e.target.files[0];
+
+    if (file) {
+      reader.readAsDataURL(file);
+
+      setImages([...images, file]);
+    }
+
     reader.onloadend = () => {
+      const previewURL = reader.result;
+
+      if (previewURL) {
+        setPreviewImg([...previewImg, previewURL]);
+      }
+
       dispatch(imageActions.setPreview(reader.result));
     };
   };
   const addArticleDB = () => {
-    if (!fileInput.current || fileInput.current.files.length === 0) {
+    if (images.length === 0) {
       window.alert("이미지파일을 등록해주세요!");
       return;
     }
-    const file = fileInput.current.files[0];
     const formData = new FormData();
-    formData.append("articleImageUrl", file);
+    formData.append("articleImageUrl1", images[0]);
+    formData.append("articleImageUrl2", images[1]);
+    formData.append("articleImageUrl3", images[2]);
     formData.append("articleTitle", title);
     formData.append("articleContent", content);
     formData.append("articlePrice", price);
@@ -71,13 +87,14 @@ const ArticleWrite = (props) => {
     return dispatch(articleActions.addArticleDB(formData));
   };
   const editArticleDB = () => {
-    if (!fileInput.current || fileInput.current.files.length === 0) {
+    if (images.length === 0) {
       window.alert("이미지파일을 등록해주세요!");
       return;
     }
-    const file = fileInput.current.files[0];
     const formData = new FormData();
-    formData.append("articleImageUrl", file);
+    formData.append("articleImageUrl1", images[0]);
+    formData.append("articleImageUrl2", images[1]);
+    formData.append("articleImageUrl3", images[2]);
     formData.append("articleTitle", title);
     formData.append("articleContent", content);
     formData.append("articlePrice", price);
@@ -101,32 +118,86 @@ const ArticleWrite = (props) => {
       </div>
     );
   }
+
   return (
     //글쓰기&수정하기 컴포넌트 입니다. 사용하실 때 조건을 걸어서 제목만 수정하기로 변경해 주시면 될 것 같습니다.
     <Box>
       <Title>
         <div className="arrow">
-          <IoMdArrowBack />
+          <IoMdArrowBack
+            onClick={() => {
+              history.goBack();
+            }}
+          />
         </div>
         <h2>중고거래 글쓰기</h2>
         <Complete onClick={is_edit ? editArticleDB : addArticleDB}>
           {is_edit ? "수정완료" : "완료"}
         </Complete>
       </Title>
-      <div className="imgBox">
-        <label htmlFor="image">
-          <MdPhotoCamera size="30px" color="black" />
-          0/3
-        </label>
-        <input type="file" id="image" ref={fileInput} onChange={selectFile} />
-        <PreviewImage
-          alt={title}
-          htmlFor="image"
-          src={preview ? preview : _article?.articleImageUrl}
-        ></PreviewImage>
-        <PreviewImage />
-        <PreviewImage />
-      </div>
+
+      {images === null || images.length === 0 ? (
+        <div className="imgBox">
+          <label htmlFor="upload-file">
+            <MdPhotoCamera size="30px" color="black" />
+            0/3
+          </label>
+          <input
+            type="file"
+            id="upload-file"
+            ref={fileInput}
+            onChange={selectFile}
+            multiple
+          />
+          <PreviewImage alt="" src={_article?.articleImageUrl_1} />
+          <PreviewImage alt="" src={_article?.articleImageUrl_2} />
+          <PreviewImage alt="" src={_article?.articleImageUrl_3} />
+        </div>
+      ) : (
+        <div className="imgBox">
+          <label htmlFor="upload-file">
+            <MdPhotoCamera size="30px" color="black" />
+            <p>{previewImg.length}/3</p>
+          </label>
+          <form encType="multipart/form-data">
+            <input
+              type="file"
+              accept="image/*"
+              id="upload-file"
+              ref={fileInput}
+              onChange={selectFile}
+              multiple
+            />
+            <PreviewImage alt="" src={previewImg[0]}></PreviewImage>
+            <input
+              type="file"
+              accept="image/*"
+              id="image2"
+              ref={fileInput}
+              onChange={selectFile}
+              multiple
+            />
+            <PreviewImage
+              alt=""
+              htmlFor="image2"
+              src={previewImg[1]}
+            ></PreviewImage>
+            <input
+              type="file"
+              accept="image/*"
+              id="image3"
+              ref={fileInput}
+              onChange={selectFile}
+              multiple
+            />
+            <PreviewImage
+              alt=""
+              htmlFor="image3"
+              src={previewImg[2]}
+            ></PreviewImage>
+          </form>
+        </div>
+      )}
       <hr />
       <Content>
         <input
@@ -154,20 +225,21 @@ const ArticleWrite = (props) => {
   );
 };
 const Box = styled.div`
-  max-width: 500px;
-  height: auto;
+  max-width: 550px;
+  height: 700px;
   padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 2% auto;
-  border: none;
+  margin: 5% auto;
+  box-shadow: 0px 0px 10px 0px #ef8549;
+  /* border: 2px solid #ef8549; */
   border-radius: 10px;
-  box-shadow: 0px 0px 10px 0px #bbb;
   .imgBox {
     display: flex;
     flex-direction: row;
-    margin-right: 100px;
+    width: 90%;
+    margin: auto;
   }
   .imgBox label {
     width: 50px;
@@ -179,6 +251,7 @@ const Box = styled.div`
     cursor: pointer;
     border: 1px solid #bbb;
     border-radius: 5px;
+    font-size: 14px;
   }
   .imgBox input {
     position: absolute;
@@ -199,6 +272,7 @@ const Title = styled.div`
   .arrow {
     font-size: 30px;
     margin: 15px auto 0px auto;
+    cursor: pointer;
   }
   h2 {
     font-size: 20px;
@@ -218,6 +292,10 @@ const Content = styled.div`
     margin-bottom: 20px;
     border-color: #ddd;
     padding: 15px 5px;
+    &:focus-visible {
+      outline: none;
+      border-color: rgb(255, 138, 61);
+    }
   }
 `;
 const Input = styled.input`
@@ -225,6 +303,10 @@ const Input = styled.input`
   height: 250px;
   border: 1px solid #bbb;
   border-radius: 10px;
+  &:focus-visible {
+    outline: none;
+    border-color: rgb(255, 138, 61);
+  }
 `;
 const PreviewImage = styled.img`
   width: 6rem;

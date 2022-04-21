@@ -1,21 +1,38 @@
 import React from "react";
 import SimpleSlider from "./SimpleSlider";
 import styled from "styled-components";
-import Article from "../components/Article";
-import ArticleList from "./ArticleList";
 import { AiOutlineHeart } from "react-icons/ai";
-import { AiTwotoneHeart } from "react-icons/ai";
+import { AiFillHeart } from "react-icons/ai";
 import { useHistory } from "react-router-dom";
+import moment from "moment";
+//영어를 한글로 바꿔줌
+import "moment/locale/ko";
+
 import { actionCreators as articleActions } from "../redux/modules/article";
 //좋아요 모듈
-import { actionCreators as likeActions } from "../redux/modules/like";
-
 import { useSelector, useDispatch } from "react-redux";
+import { actionCreators as likeActions } from "../redux/modules/like";
 
 const ArticleDetail = (props) => {
   const history = useHistory();
   const dispatch = useDispatch();
 
+  const total = useSelector((state) => state.like.list);
+  console.log(total);
+  const state = useSelector((state) => state);
+  console.log(state);
+
+  // const status = useSelector((state) => state.like.list.status);
+  // console.log(status);
+
+  const user_id = useSelector((state) => state.user.user?.uid);
+  console.log(user_id);
+  const userId = useSelector((state) => state.user.userInfo.userId);
+  console.log(userId);
+  const articleHolder = useSelector((state) => state.article.list[0].userId);
+  console.log(articleHolder);
+
+  const is_me = userId === articleHolder ? true : false;
   //좋아요 prop값
   const articlelike = props;
   console.log(props);
@@ -23,35 +40,34 @@ const ArticleDetail = (props) => {
   console.log(articleNumber);
 
   //좋아요
-  const [like, setLike] = React.useState("");
-  const [addlike, setAddLike] = React.useState("");
-  const [deletelike, setDeleteLike] = React.useState("");
+  const [like, setLike] = React.useState(false);
+
+  // 좋아요 유무에 따라서 새로고침이 되어도 그대로 반영 되게 하는 코드
 
   //좋아요 추가
-  const addLike = () => {
-    setLike(true);
-    setAddLike(1);
-    setDeleteLike(0);
-    // dispatch(likeActions.addLikeDB(articleNumber));
+  const likeClick = (props) => {
+    //좋아요를 누르면 DB, redux에 articleLike +1
+    setLike(!like);
+    dispatch(likeActions.LikeDB(articleNumber));
   };
 
-  // const articleNumber = props.match.params.articleNumber;
+  const onearticleNumber = props.match.params.articleNumber;
   // console.log(articleNumber);
+
   const article_list = useSelector((state) => state.article.list);
-  const profile = useSelector((state) => state);
-  console.log(profile);
-  console.log(article_list);
-  // const article_data = article_list[0]
+
   const article_idx = article_list.findIndex(
     (p) => p.articleNumber == articleNumber
   );
   //전체값의 순서랑 게시물 하나의 번호 비교
   console.log(article_idx);
   const article_data = article_list[article_idx];
-  //게시물이 있니? 있으면 넣고 없으면 null 넣어줘
-  const [article, setArticle] = React.useState(
-    article_data ? article_data : null
-  );
+  console.log(article_data);
+
+  //시간
+
+  const time = moment(article_data?.articleCreatedAt).fromNow();
+  console.log(time);
 
   const deleteArticle = () => {
     const result = window.confirm("정말 삭제하시겠습니까?");
@@ -63,41 +79,38 @@ const ArticleDetail = (props) => {
   };
 
   React.useEffect(() => {
-    //   axios({
-    //     method: "POST",
-    //     // url: ``, //서버 주소
-    //     url:`https://6253d1d889f28cf72b5335ef.mockapi.io/datail` //가상 데이터 저장소
-    //   }).then((response) => {
-    //     console.log(response.data);
-    //   }).catch((err) => {
-    //   console.log("새로고침하면 날아가버려~~~", err);
-    // })
-    dispatch(articleActions.getOneArticleDB(articleNumber));
+    //** dispatch를 안해주면 어디서 값이 오는거죠? */
+    dispatch(articleActions.getOneArticleDB(onearticleNumber));
   }, []);
 
-  //새로고침
-  React.useEffect(() => {}, []);
+  if (!article_data) {
+    return <></>;
+  }
 
   return (
     //이미지가 여러 장 들어갈지 한 장만 들어갈지 몰라서 둘다 넣어 놨습니다. SimpleSlider: 여러 장 / Image: 한 장
     <div>
       <Box>
-        <button
-          onClick={() => {
-            // e.stopPropagation();
-            history.push(`/edit/${articleNumber}`);
-          }}
-        >
-          수정
-        </button>
-        <button onClick={deleteArticle}>삭제</button>
+        {is_me ? (
+          <Vuttons>
+            <Vutton
+              onClick={() => {
+                // e.stopPropagation();
+                history.push(`/edit/${articleNumber}`);
+              }}
+            >
+              수정
+            </Vutton>
+            <Vutton onClick={deleteArticle}>삭제</Vutton>
+          </Vuttons>
+        ) : null}
         <SimpleSlider />
         {/* <Image />이미지 한 장일 경우 */}
         <User>
-          <Profile src={profile.userImageUrl} />
+          <Profile src={article_data.userImage} />
           <div className="userInfo">
-            <h3>{article_data.userNickname}</h3>
-            <p>{article_data.userGu + " " + article_data.userDong}</p>
+            <h3>{article_data?.userNickname}</h3>
+            <p>{article_data?.userGu + " " + article_data?.userDong}</p>
           </div>
           <Button
             onClick={() => {
@@ -106,42 +119,29 @@ const ArticleDetail = (props) => {
           >
             1:1 채팅
           </Button>
-          {/* 온클릭 이벤트 : 좋아요 누르면 채워진 하트, 좋아요 취소하면 비워진 하트 기능
-          {(like && (
-            <AiFillHeart
-              size="28"
-              style={{ margin: "8px" }}
-              onClick={delLike}
-              color="red"
-            />
-          )) || (
-              <AiOutlineHeart
-                size="28"
-                style={{ margin: "8px" }}
-                onClick={addLike}
-              />
-            )} */}
+
           <Like>
-            {(like && (
-              <AiTwotoneHeart //좋아요 눌렀을때 채워진 하트
+            {total.status ? (
+              <AiFillHeart //좋아요 눌렀을때 채워진 하트
                 className="likeicon"
                 size="40px"
-                color="#ef8549"
-                // onClick={delLike}
+                color="#ff4901"
+                onClick={likeClick}
               />
-            )) || (
-              <AiOutlineHeart size="40px" color="#ef8549" onClick={addLike} />
+            ) : (
+              <AiOutlineHeart size="40px" color="#ff4901" onClick={likeClick} />
             )}
           </Like>
         </User>
         <hr />
         <Contents>
-          <h2>{article_data.articleTitle}</h2>
-          <h3>{article_data.articlePrice}원</h3>
-          <p>{article_data.articleContent}</p>
+          <h2>{article_data?.articleTitle}</h2>
+          <h3>{article_data?.articlePrice.toLocaleString()}원</h3>
+          <p>{article_data?.articleContent}</p>
           <div className="likeandtime">
-            <p className="like">관심 {article_data.articleLike} ㆍ</p>
-            <p>{article_data.articleCreatedAt}시간 전</p>
+            <p className="like">관심 {total.totalLike} ㆍ</p>
+            {/* 시간 */}
+            <p>{time}</p>
           </div>
         </Contents>
         <hr />
@@ -149,6 +149,7 @@ const ArticleDetail = (props) => {
     </div>
   );
 };
+
 const Box = styled.div`
   width: 100vw;
   display: flex;
@@ -214,5 +215,28 @@ const Contents = styled.div`
       color: #888;
     }
   }
+`;
+const Vutton = styled.button`
+  width: 80px;
+  height: 40px;
+  border: 2px solid #ef8549;
+  background-color: #fff;
+  border-radius: 5px;
+  margin: 0px 5px;
+  cursor: pointer;
+  &:hover {
+    border: none;
+    color: #fff;
+    background-color: #ef8549;
+  }
+`;
+const Vuttons = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 700px;
+  height: auto;
+  margin: auto;
+  justify-content: end;
 `;
 export default ArticleDetail;

@@ -25,8 +25,10 @@ const ArticleList = (props) => {
       <HeaderMessage>
         <HeaderMessageContainer>
           <RegionMatching>
-            <RegionName>{article_list[0].userGu}</RegionName> 근처를 검색하고
-            있어요.
+            <RegionName>
+              {article_list[0].userGu + " " + article_list[0].userDong}
+            </RegionName>{" "}
+            근처를 검색하고 있어요.
           </RegionMatching>
         </HeaderMessageContainer>
       </HeaderMessage>
