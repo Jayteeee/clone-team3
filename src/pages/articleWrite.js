@@ -132,7 +132,7 @@ const ArticleWrite = (props) => {
         </div>
         <h2>중고거래 글쓰기</h2>
         <Complete onClick={is_edit ? editArticleDB : addArticleDB}>
-          {is_edit ? "수정완료" : "완료"}
+          {is_edit ? "수정완료" : "등록완료"}
         </Complete>
       </Title>
 
@@ -277,7 +277,7 @@ const Title = styled.div`
   h2 {
     font-size: 20px;
     font-weight: 600;
-    margin-right: 260px;
+    margin-right: 45%;
   }
 `;
 const Content = styled.div`
