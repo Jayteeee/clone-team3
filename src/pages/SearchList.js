@@ -2,26 +2,29 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { actionCreators as articleActions } from "../redux/modules/article";
-
 const SearchList = (props) => {
   const dispatch = useDispatch();
   //   const searchInputRef = useRef(null);
-
   const [keyword, setkeyword] = React.useState("");
 
-  //입력할때마다 값이 바뀜
-  const onChange = (e) => {
-    //event
-    setkeyword(e.target.value);
-    // console.log("검색어 : " + e.target.value);
-  };
   //입력값이 잘 들어가는지 확인
   const write = () => {
     console.log("검색어 : " + keyword);
-    // dispatch(searchActions.SearchDataDB());
     dispatch(articleActions.SearchDataDB(keyword));
   };
-  //dispatch(articleActions.SearchDataDB(keyword));
+
+  //입력할때마다 값이 바뀜
+  const onChange = (e) => {
+    //입력값 가져와
+    setkeyword(e.target.value);
+    // console.log("검색어 : " + e.target.value);
+  };
+
+  const onCheckEnter = (e) => {
+    if (e.key === "Enter") {
+      // onSignup();
+    }
+  };
   return (
     <Section>
       <div>
@@ -31,8 +34,9 @@ const SearchList = (props) => {
           placeholder="물품명을 검색해보세요!"
           onChange={onChange}
           // value={search || ''}
+          onKeyPress={onCheckEnter}
         />
-        <button onClick={write}>
+        <button onClick={write} onChange={onChange}>
           <img
             alt="Search"
             src="https://d1unjqcospf8gs.cloudfront.net/assets/home/base/header/search-icon-7008edd4f9aaa32188f55e65258f1c1905d7a9d1a3ca2a07ae809b5535380f14.svg"
@@ -64,6 +68,9 @@ const Section = styled.section`
       background-color: transparent;
       border-radius: 3px;
       font-family: inherit;
+      &:focus-visible {
+        outline: none;
+      }
     }
     & > button {
       border: none;

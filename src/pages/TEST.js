@@ -11,8 +11,8 @@ const ArticleWrite = (props) => {
   const { history } = props;
   const articleNumber = props.match.params.articleNumber;
   const is_edit = articleNumber ? true : false;
+  const preview = useSelector((state) => state.image.preview);
   const article_list = useSelector((state) => state.article.list);
-  console.log(article_list);
   const _article = is_edit
     ? article_list.find((p) => +p.articleNumber === +articleNumber)
     : null;
@@ -25,7 +25,7 @@ const ArticleWrite = (props) => {
     setTitle(_article?.articleTitle);
     setPrice(_article?.articlePrice);
     setContent(_article?.articleContent);
-  }, []);
+  }, [article_list]);
 
   const [images, setImages] = React.useState([]);
   const [previewImg, setPreviewImg] = React.useState([]);
@@ -74,10 +74,10 @@ const ArticleWrite = (props) => {
       window.alert("이미지파일을 등록해주세요!");
       return;
     }
+    const file = fileInput.current.files[0];
     const formData = new FormData();
-    formData.append("articleImageUrl1", images[0]);
-    formData.append("articleImageUrl2", images[1]);
-    formData.append("articleImageUrl3", images[2]);
+    formData.append("articleImageUrl", [images[0], images[1], images[2]]);
+    // formData.append("articleImageUrl", file);
     formData.append("articleTitle", title);
     formData.append("articleContent", content);
     formData.append("articlePrice", price);
@@ -87,14 +87,13 @@ const ArticleWrite = (props) => {
     return dispatch(articleActions.addArticleDB(formData));
   };
   const editArticleDB = () => {
-    if (images.length === 0) {
+    if (!fileInput.current || fileInput.current.files.length === 0) {
       window.alert("이미지파일을 등록해주세요!");
       return;
     }
+    const file = fileInput.current.files[0];
     const formData = new FormData();
-    formData.append("articleImageUrl1", images[0]);
-    formData.append("articleImageUrl2", images[1]);
-    formData.append("articleImageUrl3", images[2]);
+    formData.append("articleImageUrl", file);
     formData.append("articleTitle", title);
     formData.append("articleContent", content);
     formData.append("articlePrice", price);
@@ -124,11 +123,7 @@ const ArticleWrite = (props) => {
     <Box>
       <Title>
         <div className="arrow">
-          <IoMdArrowBack
-            onClick={() => {
-              history.goBack();
-            }}
-          />
+          <IoMdArrowBack />
         </div>
         <h2>중고거래 글쓰기</h2>
         <Complete onClick={is_edit ? editArticleDB : addArticleDB}>
@@ -136,66 +131,68 @@ const ArticleWrite = (props) => {
         </Complete>
       </Title>
 
+      <div className="imgBox">
+        <label htmlFor="image">
+          <MdPhotoCamera size="30px" color="black" />
+          0/3
+        </label>
+        <input type="file" id="image" ref={fileInput} onChange={selectFile} />
+        <PreviewImage
+          alt={title}
+          htmlFor="image"
+          src={preview ? preview : _article?.articleImageUrl}
+        ></PreviewImage>
+        <PreviewImage />
+        <PreviewImage />
+      </div>
+
       {images === null || images.length === 0 ? (
         <div className="imgBox">
-          <label htmlFor="upload-file">
+          <label htmlFor="image">
             <MdPhotoCamera size="30px" color="black" />
             0/3
           </label>
           <input
             type="file"
-            id="upload-file"
+            id="image"
             ref={fileInput}
             onChange={selectFile}
             multiple
           />
-          <PreviewImage alt="" src={_article?.articleImageUrl_1} />
-          <PreviewImage alt="" src={_article?.articleImageUrl_2} />
-          <PreviewImage alt="" src={_article?.articleImageUrl_3} />
+          <PreviewImage />
+          <PreviewImage />
+          <PreviewImage />
         </div>
       ) : (
         <div className="imgBox">
-          <label htmlFor="upload-file">
+          <label htmlFor="image">
             <MdPhotoCamera size="30px" color="black" />
-            <p>{previewImg.length}/3</p>
+            0/3
           </label>
-          <form encType="multipart/form-data">
-            <input
-              type="file"
-              accept="image/*"
-              id="upload-file"
-              ref={fileInput}
-              onChange={selectFile}
-              multiple
-            />
-            <PreviewImage alt="" src={previewImg[0]}></PreviewImage>
-            <input
-              type="file"
-              accept="image/*"
-              id="image2"
-              ref={fileInput}
-              onChange={selectFile}
-              multiple
-            />
-            <PreviewImage
-              alt=""
-              htmlFor="image2"
-              src={previewImg[1]}
-            ></PreviewImage>
-            <input
-              type="file"
-              accept="image/*"
-              id="image3"
-              ref={fileInput}
-              onChange={selectFile}
-              multiple
-            />
-            <PreviewImage
-              alt=""
-              htmlFor="image3"
-              src={previewImg[2]}
-            ></PreviewImage>
-          </form>
+          {images.map((el, index) => {
+            const { name } = el;
+            return (
+              <form encType="multipart/form-data">
+                <input
+                  key={"input" + index}
+                  type="file"
+                  accept="image/*"
+                  id="image"
+                  ref={fileInput}
+                  onChange={selectFile}
+                  multiple
+                />
+                <PreviewImage
+                  key={"prev" + index}
+                  alt={name}
+                  htmlFor="image"
+                  src={
+                    previewImg ? previewImg[index] : _article?.articleImageUrl
+                  }
+                ></PreviewImage>
+              </form>
+            );
+          })}
         </div>
       )}
       <hr />
@@ -225,21 +222,20 @@ const ArticleWrite = (props) => {
   );
 };
 const Box = styled.div`
-  max-width: 550px;
-  height: 700px;
+  max-width: 500px;
+  height: auto;
   padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 5% auto;
-  box-shadow: 0px 0px 10px 0px #ef8549;
-  /* border: 2px solid #ef8549; */
+  margin: 2% auto;
+  border: none;
   border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px #bbb;
   .imgBox {
     display: flex;
     flex-direction: row;
-    width: 90%;
-    margin: auto;
+    margin-right: 100px;
   }
   .imgBox label {
     width: 50px;
@@ -251,7 +247,6 @@ const Box = styled.div`
     cursor: pointer;
     border: 1px solid #bbb;
     border-radius: 5px;
-    font-size: 14px;
   }
   .imgBox input {
     position: absolute;
@@ -272,7 +267,6 @@ const Title = styled.div`
   .arrow {
     font-size: 30px;
     margin: 15px auto 0px auto;
-    cursor: pointer;
   }
   h2 {
     font-size: 20px;
@@ -292,10 +286,6 @@ const Content = styled.div`
     margin-bottom: 20px;
     border-color: #ddd;
     padding: 15px 5px;
-    &:focus-visible {
-      outline: none;
-      border-color: rgb(255, 138, 61);
-    }
   }
 `;
 const Input = styled.input`
@@ -303,10 +293,6 @@ const Input = styled.input`
   height: 250px;
   border: 1px solid #bbb;
   border-radius: 10px;
-  &:focus-visible {
-    outline: none;
-    border-color: rgb(255, 138, 61);
-  }
 `;
 const PreviewImage = styled.img`
   width: 6rem;

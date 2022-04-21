@@ -18,15 +18,15 @@ const ArticleList = (props) => {
     }
   }, []);
 
-  React.useEffect(() => {}, []);
-
   return (
     <Container>
       <HeaderMessage>
         <HeaderMessageContainer>
           <RegionMatching>
-            <RegionName>{article_list[0].userGu}</RegionName> 근처를 검색하고
-            있어요.
+            <RegionName>
+              {article_list[0].userGu + " " + article_list[0].userDong}
+            </RegionName>{" "}
+            근처를 검색하고 있어요.
           </RegionMatching>
         </HeaderMessageContainer>
       </HeaderMessage>
@@ -94,6 +94,7 @@ const Wrap = styled.div`
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  justify-content: space-between;
 `;
 const ArticleKind = styled.p`
   font-weight: 600;

@@ -4,17 +4,23 @@ import { IoIosArrowRoundBack } from "react-icons/io";
 import { useDispatch, useSelector } from "react-redux";
 import { actionCreators as userActions } from "../redux/modules/user";
 import { actionCreators as imageActions } from "../redux/modules/image";
+import Article from "../components/Article";
+import { actionCreators as articleActions } from "../redux/modules/article";
 import axios from "axios";
+import { history } from "../redux/configStore";
 
 const MyPage = () => {
   const dispatch = useDispatch();
 
+  const articleList = useSelector((state) => state.article.list);
+  console.log(articleList);
   const userInfo = useSelector((state) => state.user?.userInfo);
   const preview = useSelector((state) => state.image.preview);
   const fileInput = React.useRef();
 
   React.useEffect(() => {
     dispatch(userActions.getUserDB());
+    dispatch(articleActions.getArticleDB());
   }, []);
 
   React.useEffect(() => {
@@ -90,7 +96,13 @@ const MyPage = () => {
           <img alt="carrot" src="./img/carrot.png"></img>
           <h2>마이페이지</h2>
           <div className="icon">
-            <IoIosArrowRoundBack size="40px" color="#6B5244" />
+            <IoIosArrowRoundBack
+              size="40px"
+              color="#6B5244"
+              onClick={() => {
+                history.goBack();
+              }}
+            />
           </div>
         </div>
         <div className="fileupload">
@@ -133,16 +145,25 @@ const MyPage = () => {
           </div>
         </div>
       </MypageWrap>
+      <ListBox>
+        <Title>내가 쓴 글</Title>
+        <Wrap>
+          {articleList.map((article_item, index) => {
+            return <Article key={index} {...article_item} />;
+          })}
+        </Wrap>
+      </ListBox>
     </React.Fragment>
   );
 };
 const MypageWrap = styled.div`
   max-width: 600px;
-  height: 500px;
-  border: 2px solid #ef8549;
+  height: 530px;
+  border: none;
+  box-shadow: 0px 0px 10px 0px #ef8549;
   border-radius: 10px;
   padding: 50px;
-  margin: 100px auto; //header 삽입후 높이값 수정예정
+  margin: 50px auto; //header 삽입후 높이값 수정예정
   position: relative;
   .icon {
     position: absolute;
@@ -233,11 +254,29 @@ const Clearbtn = styled.button`
   height: 50px;
   border-radius: 10px;
   font-size: 15px;
+  margin-top: 1.8rem;
   cursor: pointer;
-  margin-top: 50px;
 `;
 const Image = styled.img`
   width: 200px;
   height: 200px;
+`;
+const ListBox = styled.div`
+  width: 80%;
+  height: auto;
+  border: 2px solid #ef8549;
+  border-radius: 10px;
+  margin: 20px auto;
+`;
+const Title = styled.h1`
+  text-align: center;
+`;
+const Wrap = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin: 3% 0% 0% 7%;
 `;
 export default MyPage;
