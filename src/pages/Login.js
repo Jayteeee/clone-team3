@@ -18,17 +18,20 @@ const Login = () => {
       <LoginWrap>
         <Head>
           <div>
-            <img alt="carrot" src="./img/carrot.png"></img>
-            <h3>로그인을 해주세요.</h3>
-          </div>
-          <div className="icon">
-            <IoIosArrowRoundBack
-              size="40px"
-              color="#6B5244"
-              onClick={() => {
-                history.replace("/");
-              }}
-            />
+            <div>
+              <img alt="carrot" src="./img/carrot.png"></img>
+              <h3>로그인을 해주세요.</h3>
+            </div>
+
+            <div className="icon">
+              <IoIosArrowRoundBack
+                size="40px"
+                color="#6B5244"
+                onClick={() => {
+                  history.replace("/");
+                }}
+              />
+            </div>
           </div>
         </Head>
         <div>
@@ -77,6 +80,18 @@ const LoginWrap = styled.div`
     margin-bottom: 50px;
     padding: 0px 0px 0px 30px;
   }
+  div:nth-of-type(1) {
+    display: flex;
+    width: 100%;
+    height: 8vh;
+  }
+  div:nth-of-type(1) > div {
+    width: 100%;
+  }
+  div:nth-of-type(1) > div:nth-of-type(2) {
+    width: 10%;
+    padding-top: 0.5em;
+  }
   div:nth-of-type(1) img {
     width: 20px;
     position: absolute;
@@ -97,7 +112,7 @@ const LoginWrap = styled.div`
     margin: auto;
     border: 1px solid #999;
     border-radius: 7px;
-    margin: 0px auto 20px auto;
+    margin: 0px auto 30px auto;
   }
   button {
     background-color: #ef8549;
@@ -107,6 +122,7 @@ const LoginWrap = styled.div`
     border-radius: 10px;
     color: #fff;
     font-size: 15px;
+    margin-top: 1em;
   }
 `;
 
