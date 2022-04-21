@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# cloneCoding
+당근마켓과 거의 똑같은 사이트를 제작해 보았습니다.  
+여러가지 힘든 부분이 많았지만 **BE**와 **FE**가 협업을 해나가면서 하나씩 trouble shooting을 했습니다.  
+현재 당근마켓의 1대1 채팅기능이 있지만, 기술력부족으로인해 **기술부채**로 남겨두었습니다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 1. 제작기간 & 팀원 소개
+* 2022년 4월 15일 ~ 2022년 4월 21일 (총 7일) ⏰
+* 6인 3조 팀 프로젝트 👍 
+   - 이미화 : 게시글 등록, 수정, 삭제 기능 구현
+   - 김영경 : 전체페이지 제작 및 조회, 상세페이지 제작 및 조회, 좋아요기능 구현
+   - 김정태 : 게시글 생성/수정/삭제, 이미지 여러장 업로드 기능구현
+   - 이태성 : 회원가입, 로그인, 사용자 정보수정 기능구현
+   - 차성빈 : 페이지 조회 및 검색, 좋아요 기능구현  
+   - 최정원 : 회원가입, 로그인, 위치정보 불러오기, 마이페이지 제작 및 기능구현, 웹소켓 기반 실시간 채팅기능 구현
 
-## Available Scripts
+## 2. 사용 기술
+  * Back-end
+    - 스택 🛠   
+      - javascript
+      - node.js
+      - Express
+      - MongoDB
+    - 라이브러리 📚
+      - cookie-parser
+      - socket.io
+      - connect-multiparty
+      - cors
+      - jsonwebtoken
+      - moment
+      - fs
+      - mongoose
+  * Front-end
+    - 스택 🛠 
+      - javascript
+      - react
+    - 라이브러리 📚
+      - redux
+      - axios
+      - socket.io
+      - redux-thunk
+      - styled-components
+* Deploy 
+    - AWS EC2 💻 
+    
+## 3. 핵심기능
+ * 회원가입 및 로그인 🏃‍♂️🏃‍♀️
+   - JWT를 이용하여 로그인과 회원가입을 구현하였습니다.
+   - 회원가입시 아이디를 중복하였는지 확인가능합니다. 
+   
+ * 사용자 위치기반 검색기능 🔎
+   - 카카오API를 활용한 사용자의 위치를 기준으로 일치하는 키워드를 검색하는 기능을 구현하였습니다. 
+   
+ * 마이페이지 기능 🙍‍♂️
+   - 사용자의 프로필사진과 닉네임, 동네주소를 수정할 수 있는 마이페이지를 구현하였습니다.
+   
+ * 게시글 CRUD 기능 🧾
+   - 게시글의 CRUD 기능을 구현하였습니다.  
+ 
+ * 좋아요 기능 👍
+   - 로그인을 한 사용자가 특정 게시글에 좋아요 기능을 사용하도록 구현하였습니다. 
+ 
+ * 실시간 전체대화 기능 📫
+   - Socket.io를 활용해서 사이트에 접속하신 모든 유저들이 서로 이야기를 나눌 수 있도록 기능구현 하였습니다.
 
-In the project directory, you can run:
+## 4. 실행화면
+[![누르면 됩니다!](https://img.youtube.com/vi/EKKKtSDHEJg/0.jpg)](https://youtu.be/EKKKtSDHEJg)
 
-### `yarn start`
+## 5. Trouble Shooting 🧨✨
+* Q1. 실시간 사용자의 위치를 기반으로한 검색기능을 어떤식으로 구현할 수 있을까?  
+   - A1. Geolocation이라는 함수를 사용해서 현재위치의 좌표를 응답받고, axios를 이용해 카카오mapAPI를 연동시켜 주소로 변환하여 기능구현 하였습니다.     
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+* Q2. 검색자의 위치를 너무 좁게 잡아서 동으로 검색시 구에 있는 물건이 검색되지 않는 문제가 있었는데 해결 할 수 없을까?
+   - A2. DB에 사용자 주소를 저장할 때 구와 동을 모두 저장하기위해서 Gu, Dong이라는 이름으로 DB에 따로 저장을해주어 검색자가 어떻게 검색을 하든 불편함을 느끼지 않도록 하였습니다.  
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* Q3. 하나의 라우터에서 2가지 기능을 수행하게 되는 상황이 왔는데 어떻게 해결해야 할까?
+   - A3. 하나의 라우터에 너무 많은 기능을 넣으려고 했던거같아 2개의 라우터로 기능을 쪼개서 구현하였습니다.  
 
-### `yarn build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Q4. 깃으로 협업할때 잦은 충돌이 개인마다 코딩 스타일이 달라서 매번 시간을 크게 할애하는데 이걸 해결할수 없을까? 
+   - A4. 코딩스타일을 모두 변수명은 카멜스타일로 통일을 하고, DB관련 변수명은 파스칼스타일로 통일을 했으며, prettier라는 플러그인을 사용해서 코드의 format을 통일 해주었습니다.  
+   
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+* Q5. 협업을 위해 어떤 노력을 할 수 있을까??
+   - A5-1. API명세서 작성은 깃북을 활용하였고, 와이어프레임 작성은 figma를 활용해서 협업을 하였습니다.
+   - A5-2. 업무중 수시로 접속해야했던 사이트를 한글문서로 남겨두었고, 업무 현황을 공유 및 관리하기위해 nortion을 활용하였습니다.
+   
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* Q6. 새로고침시 화면이 상태유지가 안되는 현상을 어떻게 해결할 수 있을까?
+   - A6. useEffect를 사용하여 각 페이지별로 데이터를 할당시켜주고 optionalChaining을 활용해 값이 먼저 불러와지지 않을 경우 기존값이 리턴되도록 하였습니다.
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+   
+* Q7. FormData에 이미지를 map method를 사용하여 입력하였을경우 서버에 body로 string타입으로 전달되어 이미지파일전달에 어려움을 어떻게 해결할까?
+   - A7. map method를 사용하지 않고 제한된 이미지만을 넣을 수 있도록 3장의 고정된 배열을 사용하여 정해진 값을 할당하였습니다.
